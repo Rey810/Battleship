@@ -1,35 +1,32 @@
-// Your ‘ships’ will be objects that include their length, where they’ve been hit and whether or not they’ve been sunk.
+import React, { Component } from "react";
 
-// Ship factory function
-// A few ships are needed:
-// 1x carrier (length: 5)
-// 1x cruiser (length: 4)
-// 1x destroyer (length: 3)
-// 1X submarine (length: 2)
-
-function determineLength(type) {
-  let typeLengths = {
-    carrier: 5,
-    cruiser: 4,
-    destroyer: 3,
-    submarine: 2,
+class Ship extends Component {
+  state = {
+    hitStatus: [],
+    isSunk: false,
   };
-  return typeLengths[type];
-}
 
-export const shipFactory = (typeStringInput) => {
-  // ensures that a string was inputted
-  if (typeof typeStringInput !== "string") {
-    throw new Error("You haven't inputed a string name for the ship");
+  determineLength(type) {
+    let typeLengths = {
+      carrier: 5,
+      cruiser: 4,
+      destroyer: 3,
+      submarine: 2,
+    };
+    return typeLengths[type];
   }
 
-  // status
-  let type = typeStringInput;
-  let length = determineLength(type);
-  let hitStatus = Array(length).fill(false);
+  // takes in a status array but defaults to the current hitStatus array
+  isSunk() {
+    let currenthitStatus = this.state.hitStatus;
+    if (currenthitStatus.every((status) => status === true)) {
+      this.setState({ isSunk: true });
+    } else {
+      return false;
+    }
+  }
 
-  // functions
-  function hit(posNum) {
+  hit(posNum) {
     // ensures that a number was passed as a variable
     if (typeof posNum !== "number") {
       throw new Error("You need to pass a number!");
@@ -39,19 +36,19 @@ export const shipFactory = (typeStringInput) => {
     // Abbreviations:
     // 1. afterStatus   =   after hit health status
     // 2. beforeStatus  =   before hit health status
-    let beforeStatus = hitStatus;
+    let beforeStatus = this.state.hitStatus;
     let targetPosition = posNum;
     let isHit = false;
     let afterStatus = [];
     // hit can only work if it's within the range of the health status array length
     try {
-      if (targetPosition < hitStatus.length && targetPosition >= 0) {
+      if (targetPosition < this.state.hitStatus.length && targetPosition >= 0) {
         afterStatus = [...beforeStatus, (beforeStatus[targetPosition] = true)];
         isHit = true;
-        hitStatus = afterStatus;
+        this.setState({ hitStatus: [...afterStatus] });
       } else {
         // this maintains the current health status of the ship if a hit fails
-        afterStatus = beforeStatus;
+        afterStatus = this.state.hitStatus;
         throw new Error("Your hit cannot be placed on the health status array");
       }
     } catch (err) {
@@ -61,16 +58,21 @@ export const shipFactory = (typeStringInput) => {
 
     return { isHit, position: targetPosition };
   }
-  function isSunk(shipHitStatus = hitStatus) {
-    console.log("hit status", shipHitStatus);
-    let currenthitStatus = shipHitStatus;
-    return currenthitStatus.every((status) => status === true);
+
+  shipBuilder(typeStringInput) {
+    // ensures that a string was inputted
+    if (typeof typeStringInput !== "string") {
+      throw new Error("You haven't inputed a string name for the ship");
+    }
+
+    // status
+    this.setState({ type: typeStringInput });
+    this.setState({ length: this.determineLength(this.state.type) });
   }
 
-  return { type, length, hitStatus, isSunk, hit };
-};
+  render() {
+    return <div className={this.state.type}></div>;
+  }
+}
 
-// REMEMBER you only have to test your object’s public interface. Only methods or properties that are used outside of your ‘ship’ object need unit tests.
-// Ships should have a hit() function that takes a number and then marks that position as ‘hit’.
-
-// isSunk() should be a function that calculates it based on their length and whether all of their positions are ‘hit’.
+export default Ship;

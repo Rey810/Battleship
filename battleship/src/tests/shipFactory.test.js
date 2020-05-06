@@ -9,84 +9,80 @@
 // expect(linkElement).toBeInTheDocument();
 // });
 
-import { shipFactory } from "../factories/shipFactory";
+import Ship from "../factories/shipFactory";
 
 // checks the fundamental type and returns of the factory
 it("the ship factory should be an object creator", () => {
-  expect(shipFactory("carrier")).toMatchObject({ type: "carrier" });
+  expect(Ship("carrier")).toMatchObject({ type: "carrier" });
 });
 
 it("the ship factory should return the inputted name as it's type", () => {
-  expect(shipFactory("destroyer").type).toBe("destroyer");
+  expect(Ship("destroyer").type).toBe("destroyer");
 });
 
 it("the ship factory should hold the isSunk status", () => {
-  expect(shipFactory("carrier").isSunk()).toBe(false);
+  expect(Ship("carrier").isSunk()).toBe(false);
 });
 
 it("should throw an error if a string isn't passed in", () => {
   () => {
-    expect(shipFactory(2343)).toThrow();
+    expect(Ship(2343)).toThrow();
   };
 });
 
 //checks the correct lengths of
 it("should return the correct length based on type", () => {
-  expect(shipFactory("carrier").length).toEqual(5);
-  expect(shipFactory("cruiser").length).toEqual(4);
-  expect(shipFactory("destroyer").length).toEqual(3);
-  expect(shipFactory("submarine").length).toEqual(2);
+  expect(Ship("carrier").length).toEqual(5);
+  expect(Ship("cruiser").length).toEqual(4);
+  expect(Ship("destroyer").length).toEqual(3);
+  expect(Ship("submarine").length).toEqual(2);
 });
 
 it("should have an array with an length of the ships length", () => {
-  expect(Array.isArray(shipFactory("carrier").hitStatus)).toBeTruthy();
+  expect(Array.isArray(Ship("carrier").hitStatus)).toBeTruthy();
 });
 
 it("should have a length matching the type of ship passed in", () => {
-  expect(shipFactory("carrier").hitStatus.length).toEqual(
-    shipFactory("carrier").length
-  );
-  expect(shipFactory("submarine").hitStatus.length).toEqual(
-    shipFactory("submarine").length
-  );
+  expect(Ship("carrier").hitStatus.length).toEqual(Ship("carrier").length);
+  expect(Ship("submarine").hitStatus.length).toEqual(Ship("submarine").length);
 });
 
-// checks the functions of the shipFactory
+// checks the functions of the Ship
 describe("ship factory functions", () => {
   //checks hit()
   describe("hit()", () => {
     //checks hit()
     it("makes sure that a hit function exists", () => {
-      expect(typeof shipFactory("").hit).toBe("function");
+      expect(typeof Ship("").hit).toBe("function");
     });
 
     it("throws an error if a number is not passed into hit()", () => {
       expect(() => {
-        shipFactory("").hit();
+        Ship("").hit();
       }).toThrow("You need to pass a number!");
     });
 
     it("ensures no change to health status if erroneous input is passed to hit()", () => {
-      let carrier = shipFactory("carrier");
+      let carrier = Ship("carrier");
       // a hit at pos 10 can't work as the length of the hitStatus array is only 5
       carrier.hit(10);
       expect(carrier.hitStatus).toEqual([false, false, false, false, false]);
     });
 
     it.only("records a hit and change in the health status of ship", () => {
-      let carrier = shipFactory("carrier");
+      let carrier = Ship("carrier");
       carrier.hit(1);
       expect(carrier.hitStatus).toEqual([false, true, false, false, false]);
     });
 
     it.only("records multiple hits and related changes in the hitStatus", () => {
-      let carrier = shipFactory("carrier");
+      let carrier = Ship("carrier");
       carrier.hit(4);
       expect(carrier.hitStatus).toEqual([false, false, false, false, true]);
     });
 
     it("ensures preceding test is not a false positive", () => {
-      let carrier = shipFactory("carrier");
+      let carrier = Ship("carrier");
       carrier.hit(1);
       expect(carrier.hitStatus).not.toEqual([
         false,
@@ -101,18 +97,18 @@ describe("ship factory functions", () => {
   // checks isSunk()
   describe("isSunk()", () => {
     it("makes sure that a isSunk function exists", () => {
-      expect(typeof shipFactory("").isSunk).toBe("function");
+      expect(typeof Ship("").isSunk).toBe("function");
     });
 
     it("the isSunk status returns true when the hitStatus is all true", () => {
-      let carrier = shipFactory("carrier");
+      let carrier = Ship("carrier");
       carrier.hitStatus = Array(5).fill(true);
       console.log("test hit status", carrier.hitStatus);
       expect(carrier.isSunk(carrier.hitStatus)).toBe(true);
     });
 
     it("the isSunk status returns false when the hitStatus is not all true", () => {
-      let carrier = shipFactory("carrier");
+      let carrier = Ship("carrier");
       console.table(carrier.hitStatus);
       expect(carrier.isSunk()).toBe(false);
     });
