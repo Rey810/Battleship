@@ -17,13 +17,57 @@ function determineLength(type) {
   return typeLengths[type];
 }
 
-export const shipFactory = (type) => {
-  if (typeof type !== "string") {
+export const shipFactory = (typeStringInput) => {
+  // ensures that a string was inputted
+  if (typeof typeStringInput !== "string") {
     throw new Error("You haven't inputed a string name for the ship");
   }
+
+  // status
+  let type = typeStringInput;
   let length = determineLength(type);
-  let isSunk = false;
-  return { type, isSunk, length };
+  let hitStatus = Array(length).fill(false);
+
+  // functions
+  function hit(posNum) {
+    // ensures that a number was passed as a variable
+    if (typeof posNum !== "number") {
+      throw new Error("You need to pass a number!");
+    }
+
+    // parameters
+    // Abbreviations:
+    // 1. afterStatus   =   after hit health status
+    // 2. beforeStatus  =   before hit health status
+    let beforeStatus = hitStatus;
+    let targetPosition = posNum;
+    let isHit = false;
+    let afterStatus = [];
+    // hit can only work if it's within the range of the health status array length
+    try {
+      if (targetPosition < hitStatus.length && targetPosition >= 0) {
+        afterStatus = [...beforeStatus, (beforeStatus[targetPosition] = true)];
+        isHit = true;
+        hitStatus = afterStatus;
+      } else {
+        // this maintains the current health status of the ship if a hit fails
+        afterStatus = beforeStatus;
+        throw new Error("Your hit cannot be placed on the health status array");
+      }
+    } catch (err) {
+      //console.log(err);
+      // handle error
+    }
+
+    return { isHit, position: targetPosition };
+  }
+  function isSunk(shipHitStatus = hitStatus) {
+    console.log("hit status", shipHitStatus);
+    let currenthitStatus = shipHitStatus;
+    return currenthitStatus.every((status) => status === true);
+  }
+
+  return { type, length, hitStatus, isSunk, hit };
 };
 
 // REMEMBER you only have to test your object’s public interface. Only methods or properties that are used outside of your ‘ship’ object need unit tests.
