@@ -4,24 +4,22 @@ import Ship from "../../components/Ship";
 
 test("correct class name based on passed down prop", () => {
   // container is a reference to the DOM node where the component is mounted
-  const { container } = render(<Ship type="carrier" />);
+  const { container } = render(<Ship shipType="carrier" />);
   expect(container.firstChild.className).toBe("carrier");
 });
 
 test("correct state (type and length) based on passed down props", () => {
-  const { container } = render(<Ship type={"submarine"} length={2} />);
+  const { container } = render(<Ship shipType={"submarine"} shipLength={2} />);
   expect(container.firstChild.classList.contains("submarine")).toBe(true);
 });
 
 describe("DOM rendering and state checking tests", () => {
   // this needs to be checked when the prop is passed down
-  it.only("checks the length data-attribute of all the ships instances instance", () => {
-    const { getByTestId } = render(<Ship type={"carrier"} length={"5"} />);
+  it("checks the length data-attribute of all the ships instances instance", () => {
+    const { getByTestId } = render(
+      <Ship shipType={"carrier"} shipLength={"5"} />
+    );
     expect(getByTestId("5")).toBeTruthy();
-  });
-
-  it("the ship factory should return the inputted name as it's type", () => {
-    // expect(Ship("destroyer").type).toBe("destroyer");
   });
 
   // these need to be checked with separate component tests

@@ -5,21 +5,21 @@ class Ship extends Component {
     isSunk: false,
   };
 
-  //  When we talk about mounting, we're talking about the process of converting the virtual components into actual DOM elements that are placed in the DOM by Reac
+  //  When we talk about mounting, we're talking about the process of converting the virtual components into actual DOM elements that are placed in the DOM by React
   componentDidMount() {
-    this.shipBuilder(this.props.type);
-    this.initHitStatus(this.props.length);
+    this.shipBuilder(this.props.shipType);
+    this.initHitStatus(this.props.shipLength);
   }
 
-  // maybe all of this can be lifted to the fleet component where the state can store all the ship types and they can be passed down here. Example, the type: "carrier" can be passed down as prop.type to the first instance of <Ship /> in fleet. Same for the length. Then the prop.length can be used for
-  shipBuilder(typeStringInput) {
+  // maybe all of this can be lifted to the fleet component where the state can store all the ship shipTypes and they can be passed down here. Example, the shipType: "carrier" can be passed down as prop.shipType to the first instance of <Ship /> in fleet. Same for the length. Then the prop.length can be used for
+  shipBuilder(shipTypeStringInput) {
     // ensures that a string was inputted
-    if (typeof typeStringInput !== "string") {
+    if (typeof shipTypeStringInput !== "string") {
       throw new Error("You haven't inputted a string name for the ship");
     }
     // // status
-    // this.setState({ type: this.props.type });
-    // this.setState({ length: this.determineLength(this.props.type) });
+    this.setState({ shipType: this.props.shipType });
+    this.setState({ length: this.determineLength(this.props.shipType) });
   }
 
   initHitStatus(length) {
@@ -28,17 +28,17 @@ class Ship extends Component {
     this.setState({ hitStatus: hitStatusArray });
   }
 
-  determineLength(type) {
-    let typeLengths = {
+  determineLength(shipType) {
+    let shipTypeLengths = {
       carrier: 5,
       cruiser: 4,
       destroyer: 3,
       submarine: 2,
     };
-    return typeLengths[type];
+    return shipTypeLengths[shipType];
   }
 
-  // takes in a status array but defaults to the current hitStatus array
+  // this function may need to be lifted to a gameboard component
   isSunk() {
     let currenthitStatus = this.state.hitStatus;
     if (currenthitStatus.every((status) => status === true)) {
@@ -48,6 +48,7 @@ class Ship extends Component {
     }
   }
 
+  // this function may needed to be lifted to a gameboard component
   hit(posNum) {
     // ensures that a number was passed as a variable
     if (typeof posNum !== "number") {
@@ -73,9 +74,11 @@ class Ship extends Component {
   }
 
   render() {
-    console.log("state in render after componentDidMount", this.state);
+    const { shipType, shipLength } = this.props;
     return (
-      <div className={this.props.type} data-testid={this.props.length}></div>
+      <div className={shipType} data-testid={shipLength}>
+        {/* the component display might be rendered here but it would probably make sense if it's just handled at the gameboard level where a grid display will be present */}
+      </div>
     );
   }
 }

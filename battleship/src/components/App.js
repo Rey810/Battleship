@@ -1,8 +1,8 @@
 import React from "react";
-import "./App.css";
-import { Ship } from "./Ship";
+import Gameboard from "../components/Gameboard";
+// import { Ship } from "./Ship";
 function App() {
-  return <Ship />;
+  return <Gameboard />;
 }
 
 export default App;
