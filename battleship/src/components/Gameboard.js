@@ -1,26 +1,41 @@
 // this will be the board that controls the game state as well as the state of the user and the computer
 // ploce ships at specific coordinates by calling the ship factory function
 import React, { Component } from "react";
+import shipFactory from "../factories/shipFactory";
 import GridCell from "../components/GridCell";
 
 export default class Gameboard extends Component {
   state = {
     /* isPlayer or isComputer can be used to track whose board is being used
-      a complete board state should probably be kept here
-      a complete ship status state should probably be kept here */
+      a complete board state is kept here
+      a complete ship status state is kept here 
+      the shipFactory function is used to populate the ship data for the user and the computer
+      */
+    isUserTurn: true,
+    isComputerTurn: false,
+    isGameOver: false,
     user: {
       isPlacedAllShips: false,
       ships: {
-        carrier: [],
-        cruiser: [],
-        destroyer: [],
-        submarine: [],
+        carrier: shipFactory("carrier"),
+        cruiser: shipFactory("cruiser"),
+        destroyer: shipFactory("destroyer"),
+        submarine: shipFactory("submarine"),
+      },
+    },
+    computer: {
+      isPlacedAllShips: false,
+      ships: {
+        carrier: shipFactory("carrier"),
+        cruiser: shipFactory("cruiser"),
+        destroyer: shipFactory("destroyer"),
+        submarine: shipFactory("submarine"),
       },
     },
   };
 
   // takes in click coordinates: the GridCell id (eg. "3" from <div id="P-3"></div>)
-  // and then it creates a ship of length (shipLength defined in the Ship component starting at selected coordinates
+  // and then it places a ship starting at the selected position
   handleClick = (e) => {
     let clickedID = e.target.id;
     this.setState({ user: { ships: { carrier: [clickedID] } } });
