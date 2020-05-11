@@ -1,7 +1,7 @@
 import shipFactory from "../factories/shipFactory";
 
 // checks the fundamental type and returns of the factory
-it.only("the ship factory should be an object creator", () => {
+it("the ship factory should be an object creator", () => {
   expect(shipFactory("carrier")).toMatchObject({ type: "carrier" });
 });
 

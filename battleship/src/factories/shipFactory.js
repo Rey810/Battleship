@@ -1,21 +1,11 @@
-let shipFactory = (shipTypeStringInput) => {
-  // ensures that a string was inputted
-  if (typeof shipTypeStringInput !== "string") {
-    throw new Error("You haven't inputted a string name for the ship");
-  }
+// Your ‘ships’ will be objects that include their length, where they’ve been hit and whether or not they’ve been sunk.
 
-  // initial ship status
-  let type = shipTypeStringInput;
-  let length = determineLength(type);
-
-  return { type, length };
-};
-
-//   initHitStatus(length) {
-//     let shipLength = length;
-//     let hitStatusArray = Array(shipLength).fill("false");
-//     this.setState({ hitStatus: hitStatusArray });
-//   }
+// Ship factory function
+// A few ships are needed:
+// 1x carrier (length: 5)
+// 1x cruiser (length: 4)
+// 1x destroyer (length: 3)
+// 1X submarine (length: 2)
 
 function determineLength(shipType) {
   let shipTypeLengths = {
@@ -27,54 +17,63 @@ function determineLength(shipType) {
   return shipTypeLengths[shipType];
 }
 
-//   // this function may need to be lifted to a gameboard component
-//   isSunk() {
-//     let currenthitStatus = this.state.hitStatus;
-//     if (currenthitStatus.every((status) => status === true)) {
-//       this.setState({ isSunk: true });
-//     } else {
-//       return false;
-//     }
-//   }
+const shipFactory = (shipTypeStringInput) => {
+  // ensures that a string was inputted
+  if (typeof shipTypeStringInput !== "string") {
+    throw new Error("You haven't inputted a string name for the ship");
+  }
 
-//   // this function may needed to be lifted to a gameboard component
-//   hit(posNum) {
-//     // ensures that a number was passed as a variable
-//     if (typeof posNum !== "number") {
-//       throw new Error("You need to pass a number!");
-//     }
-//     // parameters
-//     // Abbreviations:
-//     // 1. afterStatus   =   after hit health status
-//     // 2. beforeStatus  =   before hit health status
-//     let beforeStatus = this.state.hitStatus;
-//     let targetPosition = posNum;
-//     let isHit = false;
-//     let afterStatus = [];
-//     // hit can only work if it's within the range of the health status array length
-//     if (targetPosition < this.state.hitStatus.length && targetPosition >= 0) {
-//       afterStatus = [...beforeStatus, (beforeStatus[targetPosition] = true)];
-//       isHit = true;
-//       this.setState({ hitStatus: [...afterStatus] });
-//     } else {
-//       throw new Error("Your hit cannot be placed on the health status array");
-//     }
-//     return { isHit, position: targetPosition };
-//   }
+  // initial ship status
+  let type = shipTypeStringInput;
+  let length = determineLength(type);
+  let hitStatus = Array(length).fill(false);
 
-//   render() {
-//     const { shipType, shipLength } = this.props;
-//     return (
-//       <div className={shipType} data-testid={shipLength}>
-//         {/* the component display might be rendered here but it would probably make sense if it's just handled at the gameboard level where a grid display will be present */}
-//       </div>
-//     );
-//   }
-// }
+  // functions
+  function hit(posNum) {
+    // ensures that a number was passed as a variable
+    if (typeof posNum !== "number") {
+      throw new Error("You need to pass a number!");
+    }
 
-// Ship.propTypes = {
-//   shipType: PropTypes.oneOf(["carrier", "submarine", "destroyer", "cruiser"]),
-//   shipLength: PropTypes.oneOf([5, 4, 3, 2]),
-// };
+    // parameters
+    // Abbreviations:
+    // 1. afterStatus   =   after hit health status
+    // 2. beforeStatus  =   before hit health status
+    let beforeStatus = hitStatus;
+    let targetPosition = posNum;
+    let isHit = false;
+    let afterStatus = [];
+    // hit can only work if it's within the range of the health status array length
+    try {
+      if (targetPosition < hitStatus.length && targetPosition >= 0) {
+        afterStatus = [...beforeStatus, (beforeStatus[targetPosition] = true)];
+        isHit = true;
+        hitStatus = afterStatus;
+      } else {
+        // this maintains the current health status of the ship if a hit fails
+        afterStatus = beforeStatus;
+        throw new Error("Your hit cannot be placed on the health status array");
+      }
+    } catch (err) {
+      //console.log(err);
+      // handle error
+    }
+
+    return { isHit, position: targetPosition };
+  }
+
+  function isSunk(shipHitStatus = hitStatus) {
+    console.log("hit status", shipHitStatus);
+    let currenthitStatus = shipHitStatus;
+    return currenthitStatus.every((status) => status === true);
+  }
+
+  return { type, length, hitStatus, isSunk, hit };
+};
+
+// REMEMBER you only have to test your object’s public interface. Only methods or properties that are used outside of your ‘ship’ object need unit tests.
+// Ships should have a hit() function that takes a number and then marks that position as ‘hit’.
+
+// isSunk() should be a function that calculates it based on its length and whether all of its positions are ‘hit’.
 
 export default shipFactory;
