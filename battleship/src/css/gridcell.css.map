@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,QAAQ,CAAC;EACP,gBAAgB,EAAE,OAAgB;CACnC",
+    "sources": [
+        "gridcell.scss"
+    ],
+    "names": [],
+    "file": "gridcell.css"
+}

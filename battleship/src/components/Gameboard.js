@@ -17,6 +17,12 @@ export default class Gameboard extends Component {
     user: {
       isPlacedAllShips: false,
       ships: {
+        // each shipFactory returns the following:
+        // 1. isPlaced: Boolean
+        // 2. gridPosition: Array
+        // 3. isSunk: function
+        // 4. length: Number
+        // 5. Type: String
         carrier: shipFactory("carrier"),
         cruiser: shipFactory("cruiser"),
         destroyer: shipFactory("destroyer"),
@@ -38,7 +44,13 @@ export default class Gameboard extends Component {
   // and then it places a ship starting at the selected position
   handleClick = (e) => {
     let clickedID = e.target.id;
-    this.setState({ user: { ships: { carrier: [clickedID] } } });
+    // this needs to be made dynamic so that the ships can be placed on after another
+    // a loop can be used or a check where each ship is put in an array and then thats lopped through, running a putShipOnGrid if it's isPlaced = false
+    // creates a shallow copy so that the state is not mutated directly
+    const { carrier } = { ...this.state.user.ships };
+    // the value changes but the state is not re-rendered because setState is not used
+    carrier.isPlaced = true;
+    carrier.gridPosition = [clickedID, "P2", "P3"];
   };
 
   render() {
@@ -47,7 +59,12 @@ export default class Gameboard extends Component {
     // I want a grid of 10x10 so this loop pushes GridCells to the container 100 times
     for (let i = 1; i <= 100; i++) {
       gridCellsContainer.push(
-        <GridCell key={i} id={`P${i}`} handleClick={this.handleClick} />
+        <GridCell
+          key={i}
+          id={`P${i}`}
+          handleClick={this.handleClick}
+          ships={this.state.user.ships}
+        />
       );
     }
 
