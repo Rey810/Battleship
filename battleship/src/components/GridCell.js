@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 
 export default class GridCell extends Component {
   handleHover(e) {
@@ -20,3 +21,9 @@ export default class GridCell extends Component {
     );
   }
 }
+
+//proptypes
+// good practice
+GridCell.propTypes = {
+  id: PropTypes.string.isRequired,
+};
