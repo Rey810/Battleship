@@ -9,7 +9,7 @@ export default class GridCell extends Component {
   // maybe handle click here to where the clicked position can bubble up to the gameboard component where it then renders the ship starting from the clicked position
 
   render() {
-    const { id } = this.props;
+    const { id, handleClick } = this.props;
 
     return (
       <div
@@ -17,6 +17,7 @@ export default class GridCell extends Component {
         className="grid-cell"
         onMouseEnter={this.handleHover}
         onMouseLeave={this.handleHover}
+        onClick={handleClick}
       ></div>
     );
   }
