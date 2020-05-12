@@ -38,19 +38,39 @@ export default class Gameboard extends Component {
   // takes in click coordinates: the GridCell id (eg. "3" from <div id="P-3"></div>)
   // and then it places a ship starting at the selected position
   handleClick = (e) => {
+    const { userCarrier, userCruiser, userDestroyer, userSubmarine } = {
+      ...this.state,
+    };
+    let shipsArray = [userCarrier, userCruiser, userDestroyer, userSubmarine];
+    // the ship which will be placed now
+    let nextShip;
+    shipsArray.some((shipObj) => {
+      console.log(shipObj.type);
+      if (shipObj.isPlaced === false) {
+        return (nextShip = shipObj);
+      }
+    });
+    // the ship which has not been placed
+    console.log(nextShip);
+
+    // e.target is the GridCell component's html element
     let clickedID = e.target.id;
     // remove the letter from the clicked id to make adding up easier
     // clean ID
     let numID = parseInt(clickedID.replace("P", ""), 10);
-    // let cleanedID = parseInt(cleanedID, 10);
-    // console.log(cleanedID);
     // this needs to be made dynamic so that the ships can be placed on after another
     // a loop can be used or a check where each ship is put in an array and then thats lopped through, running a putShipOnGrid if it's isPlaced = false
-    // creates a shallow copy so that the state is not mutated directly
-    const { userCarrier } = { ...this.state };
+
     // the value changes but the state is not re-rendered because setState is not used
-    userCarrier.isPlaced = true;
-    userCarrier.gridPosition = [numID, numID + 1, numID + 2];
+    nextShip.isPlaced = true;
+    // rewrite this to create gird positions matching the length of the ship
+    // nextShip.length
+    let currNum = numID;
+    for (let i = 1; i <= nextShip.length; i++) {
+      // length number of times, add a number to the array
+      userCarrier.gridPosition.push(currNum);
+      currNum += 1;
+    }
 
     // setState here so that the gameboard component gets re-rendered
     this.setState({ userCarrier: { ...userCarrier } });
