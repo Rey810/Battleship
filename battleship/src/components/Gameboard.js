@@ -45,7 +45,6 @@ export default class Gameboard extends Component {
     // the ship which will be placed now
     let nextShip;
     shipsArray.some((shipObj) => {
-      console.log(shipObj.type);
       if (shipObj.isPlaced === false) {
         return (nextShip = shipObj);
       }
@@ -77,7 +76,9 @@ export default class Gameboard extends Component {
   };
 
   hasShip(gridcellID) {
-    // takes a number id, compares id to an array containing all the gridPositions (positions which the ship should occupy) and returning true if the id is found in one of the grid positions
+    // takes a number id
+    // compares id to an array containing all the gridPositions (positions which the ship should occupy)
+    // Reeturning "hasSHip" if the id is found in one of the grid positions
 
     // all the grid positions of all the ships
     let shipGridPositions = [
@@ -87,8 +88,11 @@ export default class Gameboard extends Component {
       ...this.state.userSubmarine.gridPosition,
     ];
 
-    // this value is passed down as a prop to the gridCell component where it will add a "hasShip" class if true
-    return shipGridPositions.some((position) => position === gridcellID);
+    // this value is passed down as a prop to the gridCell component
+    // the returned string is a css class name
+    return shipGridPositions.some((position) => position === gridcellID)
+      ? "hasShip"
+      : "";
   }
 
   render() {

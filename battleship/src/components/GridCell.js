@@ -14,19 +14,14 @@ export default class GridCell extends Component {
     return e.target.classList.toggle("hovering");
   }
 
-  getClasses() {
-    const { hasShip } = this.props;
-    return hasShip ? "hasShip" : "";
-  }
-
   render() {
-    const { id, handleClick } = this.props;
+    const { id, handleClick, hasShip } = this.props;
 
     return (
       <div
         id={id}
         className={`grid-cell 
-        ${this.getClasses()}`}
+        ${hasShip}`}
         onMouseEnter={this.handleHover}
         onMouseLeave={this.handleHover}
         onClick={handleClick}

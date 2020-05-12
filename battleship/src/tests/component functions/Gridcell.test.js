@@ -2,6 +2,7 @@ import React from "react";
 import { render, fireEvent } from "@testing-library/react";
 import "../../components/Gameboard";
 import GridCell from "../../components/GridCell";
+import Gameboard from "../../components/Gameboard";
 
 describe("gridcell functionality", () => {
   it("grid cell has a handleHover function", () => {
@@ -23,5 +24,13 @@ describe("gridcell functionality", () => {
     expect(gridcell.classList.contains("hovering")).toBe(false);
   });
 
-  if (("ensure a background colour changes when a cell has a ship", () => {}));
+  it("ensure a hasShip class (bg color change) is applied when grid is clicked", () => {
+    const { container } = render(<Gameboard />);
+
+    const gridcell = container.querySelector("#P1");
+    expect(gridcell.classList.contains("hasShip")).toBe(false);
+
+    fireEvent.click(gridcell);
+    expect(gridcell.classList.contains("hasShip")).toBe(true);
+  });
 });
