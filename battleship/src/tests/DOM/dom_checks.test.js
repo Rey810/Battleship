@@ -17,7 +17,7 @@ describe("DOM rendering and state checking tests", () => {
   // this needs to be checked when the prop is passed down
   it("checks the length data-attribute of all the ships instances instance", () => {
     const { getByTestId } = render(
-      <Ship shipType={"carrier"} shipLength={"5"} />
+      <Ship shipType={"carrier"} shipLength={5} />
     );
     expect(getByTestId("5")).toBeTruthy();
   });

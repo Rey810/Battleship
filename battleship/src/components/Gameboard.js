@@ -35,11 +35,10 @@ export default class Gameboard extends Component {
     computerSubmarine: shipFactory("submarine"),
   };
 
-  // takes in click coordinates: the GridCell id (eg. "3" from <div id="P-3"></div>)
-  // and then it places a ship starting at the selected position
-  handleClick = (e) => {
+  // returns the next ship object based on it's isPlaced boolean
+  getNextShip(state) {
     const { userCarrier, userCruiser, userDestroyer, userSubmarine } = {
-      ...this.state,
+      ...state,
     };
     let shipsArray = [userCarrier, userCruiser, userDestroyer, userSubmarine];
     // the ship which will be placed now
@@ -49,37 +48,73 @@ export default class Gameboard extends Component {
         return (nextShip = shipObj);
       }
     });
-    // the ship which has not been placed
-    console.log(nextShip);
 
+    // the ship which has not been placed
+    return nextShip;
+  }
+
+  // returns a formatted key for use in setting the state when a ship is placed
+  getNextShipKey(shipType) {
+    // derive nextShip key name from it's type
+    return `user${shipType[0].toUpperCase()}${shipType.slice(1)}`;
+  }
+
+  // builds the grid position array for the next ship to be placed
+  getNextShipGP(arr, num, length) {
+    try {
+      if (
+        typeof arr !== "object" ||
+        typeof num !== "number" ||
+        typeof length !== "number"
+      ) {
+        throw new TypeError();
+      }
+
+      let gridPositions = arr;
+      let startingPos = num;
+      let shipLength = length;
+      let currNum = startingPos;
+
+      for (let i = 1; i <= shipLength; i++) {
+        // length number of times, add a number to the array
+        gridPositions.push(currNum);
+        currNum += 1;
+      }
+
+      return gridPositions;
+    } catch (e) {
+      console.log(e.message);
+    }
+  }
+
+  // takes in click coordinates: the GridCell id (eg. "3" from <div id="P-3"></div>)
+  // and then it places a ship starting at the selected position
+  handleClick = (e) => {
     // e.target is the GridCell component's html element
     let clickedID = e.target.id;
     // remove the letter from the clicked id to make adding up easier
-    // clean ID
     let numID = parseInt(clickedID.replace("P", ""), 10);
-    // this needs to be made dynamic so that the ships can be placed on after another
-    // a loop can be used or a check where each ship is put in an array and then thats lopped through, running a putShipOnGrid if it's isPlaced = false
 
+    // the nextShip is chosen by it's isPlaced boolean
+    let nextShip = this.getNextShip(this.state);
     // the value changes but the state is not re-rendered because setState is not used
     nextShip.isPlaced = true;
-    // rewrite this to create gird positions matching the length of the ship
-    // nextShip.length
-    let currNum = numID;
-    for (let i = 1; i <= nextShip.length; i++) {
-      // length number of times, add a number to the array
-      userCarrier.gridPosition.push(currNum);
-      currNum += 1;
-    }
 
+    // the current positions, clicked grid cell id and ship length are passed to the function
+    nextShip.gridPosition = [
+      ...this.getNextShipGP(nextShip.gridPosition, numID, nextShip.length),
+    ];
+
+    // formats the ship key for easy state management
+    let nextShipKey = this.getNextShipKey(nextShip.type);
     // setState here so that the gameboard component gets re-rendered
-    this.setState({ userCarrier: { ...userCarrier } });
+    this.setState({ [nextShipKey]: { ...nextShip } });
   };
 
+  // takes a number id
+  // compares id to an array containing all the ships' gridPositions
+  // Returns "hasSHip" if the id is found in one of the grid positions
   hasShip(gridcellID) {
-    // takes a number id
-    // compares id to an array containing all the gridPositions (positions which the ship should occupy)
-    // Reeturning "hasSHip" if the id is found in one of the grid positions
-
     // all the grid positions of all the ships
     let shipGridPositions = [
       ...this.state.userCarrier.gridPosition,

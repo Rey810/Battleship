@@ -1,18 +1,27 @@
+/* eslint-disable no-unused-expressions */
 import Gameboard from "../../components/Gameboard";
-import React from "react";
-import { render, fireEvent } from "@testing-library/react";
 
 describe("Gameboard component functionality", () => {
-  describe("handleClick()", () => {
-    it("should correctly handle the click", () => {});
-  });
+  describe("handleClick()", () => {});
+
   describe("hasShip()", () => {
     it("should return a boolean", () => {
       let gameBoard = new Gameboard();
       let returnValue = gameBoard.hasShip("P-1");
-      expect(typeof returnValue === "boolean").toBe(true);
+      expect(typeof returnValue === "string").toBe(true);
+    });
+  });
+  describe("getNextShipGP()", () => {
+    it("should throw an error if erroneous inputs passed", () => {
+      let gameBoard = new Gameboard();
+      () => {
+        expect(gameBoard.getNextShipGP("")).toThrow();
+      };
     });
 
-    it("should colour the right grid positions", () => {});
+    it("should return an array with correct gridPositions", () => {
+      let gameBoard = new Gameboard();
+      expect(gameBoard.getNextShipGP([], 3, 4)).toEqual([3, 4, 5, 6]);
+    });
   });
 });

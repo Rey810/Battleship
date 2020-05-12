@@ -10,7 +10,7 @@ describe("gridcell functionality", () => {
     expect(typeof GCinstance.handleHover).toBe("function");
   });
 
-  it("handleHover()", () => {
+  it("hovering class is applied on grid cell hover", () => {
     const { container } = render(<GridCell id="P-8" />);
     const gridcell = container.firstChild;
     expect(gridcell.classList.contains("grid-cell")).toBe(true);
@@ -24,7 +24,7 @@ describe("gridcell functionality", () => {
     expect(gridcell.classList.contains("hovering")).toBe(false);
   });
 
-  it("ensure a hasShip class (bg color change) is applied when grid is clicked", () => {
+  it("hasShip class (bg color change) is applied on grid cell click", () => {
     const { container } = render(<Gameboard />);
 
     const gridcell = container.querySelector("#P1");

@@ -86,7 +86,7 @@ class Ship extends Component {
 
 Ship.propTypes = {
   shipType: PropTypes.oneOf(["carrier", "submarine", "destroyer", "cruiser"]),
-  shipLength: PropTypes.oneOf([5, 4, 3, 2]),
+  shipLength: PropTypes.number,
 };
 
 export default Ship;
