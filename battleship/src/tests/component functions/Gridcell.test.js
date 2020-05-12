@@ -22,4 +22,6 @@ describe("gridcell functionality", () => {
     expect(gridcell.classList.contains("grid-cell")).toBe(true);
     expect(gridcell.classList.contains("hovering")).toBe(false);
   });
+
+  if (("ensure a background colour changes when a cell has a ship", () => {}));
 });

@@ -13,45 +13,63 @@ export default class Gameboard extends Component {
       */
     isUserTurn: true,
     isComputerTurn: false,
+    userIsPlacedAllShips: false,
+    computerIsPlacedAllShips: false,
     isGameOver: false,
-    user: {
-      isPlacedAllShips: false,
-      ships: {
-        // each shipFactory returns the following:
-        // 1. isPlaced: Boolean
-        // 2. gridPosition: Array
-        // 3. isSunk: function
-        // 4. length: Number
-        // 5. Type: String
-        carrier: shipFactory("carrier"),
-        cruiser: shipFactory("cruiser"),
-        destroyer: shipFactory("destroyer"),
-        submarine: shipFactory("submarine"),
-      },
-    },
-    computer: {
-      isPlacedAllShips: false,
-      ships: {
-        carrier: shipFactory("carrier"),
-        cruiser: shipFactory("cruiser"),
-        destroyer: shipFactory("destroyer"),
-        submarine: shipFactory("submarine"),
-      },
-    },
+    // each shipFactory returns the following:
+    // 1. isPlaced: Boolean
+    // 2. gridPosition: Array
+    // 3. isSunk: function
+    // 4. length: Number
+    // 5. Type: String
+
+    // user ships' state
+    userCarrier: shipFactory("carrier"),
+    userCruiser: shipFactory("cruiser"),
+    userDestroyer: shipFactory("destroyer"),
+    userSubmarine: shipFactory("submarine"),
+    // conputer ships' state
+    computerCarrier: shipFactory("carrier"),
+    computerCruiser: shipFactory("cruiser"),
+    computerDestroyer: shipFactory("destroyer"),
+    computerSubmarine: shipFactory("submarine"),
   };
 
   // takes in click coordinates: the GridCell id (eg. "3" from <div id="P-3"></div>)
   // and then it places a ship starting at the selected position
   handleClick = (e) => {
     let clickedID = e.target.id;
+    // remove the letter from the clicked id to make adding up easier
+    // clean ID
+    let numID = parseInt(clickedID.replace("P", ""), 10);
+    // let cleanedID = parseInt(cleanedID, 10);
+    // console.log(cleanedID);
     // this needs to be made dynamic so that the ships can be placed on after another
     // a loop can be used or a check where each ship is put in an array and then thats lopped through, running a putShipOnGrid if it's isPlaced = false
     // creates a shallow copy so that the state is not mutated directly
-    const { carrier } = { ...this.state.user.ships };
+    const { userCarrier } = { ...this.state };
     // the value changes but the state is not re-rendered because setState is not used
-    carrier.isPlaced = true;
-    carrier.gridPosition = [clickedID, "P2", "P3"];
+    userCarrier.isPlaced = true;
+    userCarrier.gridPosition = [numID, numID + 1, numID + 2];
+
+    // setState here so that the gameboard component gets re-rendered
+    this.setState({ userCarrier: { ...userCarrier } });
   };
+
+  hasShip(gridcellID) {
+    // takes a number id, compares id to an array containing all the gridPositions (positions which the ship should occupy) and returning true if the id is found in one of the grid positions
+
+    // all the grid positions of all the ships
+    let shipGridPositions = [
+      ...this.state.userCarrier.gridPosition,
+      ...this.state.userCruiser.gridPosition,
+      ...this.state.userDestroyer.gridPosition,
+      ...this.state.userSubmarine.gridPosition,
+    ];
+
+    // this value is passed down as a prop to the gridCell component where it will add a "hasShip" class if true
+    return shipGridPositions.some((position) => position === gridcellID);
+  }
 
   render() {
     // the container will contain each GridCell with it's associated props
@@ -63,7 +81,7 @@ export default class Gameboard extends Component {
           key={i}
           id={`P${i}`}
           handleClick={this.handleClick}
-          ships={this.state.user.ships}
+          hasShip={this.hasShip(i)}
         />
       );
     }
