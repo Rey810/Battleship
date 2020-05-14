@@ -35,6 +35,7 @@ export default class Gameboard extends Component {
     computerSubmarine: shipFactory("submarine"),
   };
 
+  // 3 PLACE SHIP FUNCTIONS + 1 fleet placement status check function
   // returns the next ship object based on it's isPlaced boolean
   getNextShip(state) {
     const { userCarrier, userCruiser, userDestroyer, userSubmarine } = {
@@ -87,6 +88,14 @@ export default class Gameboard extends Component {
     }
   }
 
+  isFleetPlaced(state) {
+    const { userCarrier, userCruiser, userDestroyer, userSubmarine } = {
+      ...state,
+    };
+    let shipsArray = [userCarrier, userCruiser, userDestroyer, userSubmarine];
+    return shipsArray.every((shipObj) => shipObj.isPlaced === true);
+  }
+
   // takes in click coordinates: the GridCell id (eg. "3" from <div id="P-3"></div>)
   // and then it places a ship starting at the selected position
   handleClick = (e) => {
@@ -109,6 +118,12 @@ export default class Gameboard extends Component {
     let nextShipKey = this.getNextShipKey(nextShip.type);
     // setState here so that the gameboard component gets re-rendered
     this.setState({ [nextShipKey]: { ...nextShip } });
+
+    //tell user that all ships are placed
+    if (this.isFleetPlaced(this.state)) {
+      this.setState({ userIsPlacedAllShips: true });
+      alert("all ships placed!");
+    }
   };
 
   // takes a number id
