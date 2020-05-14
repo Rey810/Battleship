@@ -11,6 +11,7 @@ describe("Gameboard component functionality", () => {
       expect(typeof returnValue === "string").toBe(true);
     });
   });
+
   describe("getNextShipGP()", () => {
     it("should throw an error if erroneous inputs passed", () => {
       let gameBoard = new Gameboard();
@@ -22,6 +23,38 @@ describe("Gameboard component functionality", () => {
     it("should return an array with correct gridPositions", () => {
       let gameBoard = new Gameboard();
       expect(gameBoard.getNextShipGP([], 3, 4)).toEqual([3, 4, 5, 6]);
+    });
+  });
+
+  describe("checkAttackAction()", () => {
+    it.only("returns a hit ship and the position", () => {
+      let gameboard = new Gameboard();
+      let shipsArray = [
+        {
+          carrier: { gridPosition: [1, 2, 3, 4, 5] },
+        },
+        {
+          cruiser: { gridPosition: [50, 51, 52, 53] },
+        },
+      ];
+      expect(gameboard.checkAttackAction(shipsArray, 4)).toMatchObject({
+        ship: { carrier: { gridPosition: [1, 2, 3, 4, 5] } },
+        hitIndexPos: 3,
+        hitGridPos: 4,
+      });
+    });
+  });
+
+  describe("receiveAttack()", () => {
+    let gameboard = new Gameboard();
+    // mock state for a carrier
+    let shipState = {
+      type: "carrier",
+      hitStatus: [false, false, false, false, false],
+    };
+
+    it("returns the an object of the old hitStatus vs the new hit Status", () => {
+      expect(gameboard.receiveAttack(1, shipState)).toMatchObject({});
     });
   });
 });

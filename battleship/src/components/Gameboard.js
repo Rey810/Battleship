@@ -22,12 +22,13 @@ export default class Gameboard extends Component {
     // 3. isSunk: function
     // 4. length: Number
     // 5. Type: String
+    // 6. hitStatus
 
     // user ships' state
-    userCarrier: shipFactory("carrier"),
-    userCruiser: shipFactory("cruiser"),
-    userDestroyer: shipFactory("destroyer"),
-    userSubmarine: shipFactory("submarine"),
+    carrier: shipFactory("carrier"),
+    cruiser: shipFactory("cruiser"),
+    destroyer: shipFactory("destroyer"),
+    submarine: shipFactory("submarine"),
     // conputer ships' state
     computerCarrier: shipFactory("carrier"),
     computerCruiser: shipFactory("cruiser"),
@@ -38,10 +39,10 @@ export default class Gameboard extends Component {
   // 3 PLACE SHIP FUNCTIONS + 1 fleet placement status check function
   // returns the next ship object based on it's isPlaced boolean
   getNextShip(state) {
-    const { userCarrier, userCruiser, userDestroyer, userSubmarine } = {
+    const { carrier, cruiser, destroyer, submarine } = {
       ...state,
     };
-    let shipsArray = [userCarrier, userCruiser, userDestroyer, userSubmarine];
+    let shipsArray = [carrier, cruiser, destroyer, submarine];
     // the ship which will be placed now
     let nextShip;
     shipsArray.some((shipObj) => {
@@ -55,10 +56,11 @@ export default class Gameboard extends Component {
   }
 
   // returns a formatted key for use in setting the state when a ship is placed
-  getNextShipKey(shipType) {
-    // derive nextShip key name from it's type
-    return `user${shipType[0].toUpperCase()}${shipType.slice(1)}`;
-  }
+  // commented out due to a simplified key name which doesn't require formatting
+  // getNextShipKey(shipType) {
+  //   // derive nextShip key name from it's type
+  //   return `user${shipType[0].toUpperCase()}${shipType.slice(1)}`;
+  // }
 
   // builds the grid position array for the next ship to be placed
   getNextShipGP(arr, num, length) {
@@ -89,11 +91,64 @@ export default class Gameboard extends Component {
   }
 
   isFleetPlaced(state) {
-    const { userCarrier, userCruiser, userDestroyer, userSubmarine } = {
+    const { carrier, cruiser, destroyer, submarine } = {
       ...state,
     };
-    let shipsArray = [userCarrier, userCruiser, userDestroyer, userSubmarine];
+    let shipsArray = [carrier, cruiser, destroyer, submarine];
     return shipsArray.every((shipObj) => shipObj.isPlaced === true);
+  }
+
+  checkAttackAction(arrayOfShips, attackedPos) {
+    // for each ship, check its gridpositions and see if it has a grid position that matches attackedPosition
+    let shipsArray = arrayOfShips;
+    let gridPos = attackedPos;
+    let hitPosition;
+    let hitShip;
+    let foundPos;
+    // check each ship and return out of the function withe ship obj, the index position for the hit and the grid position for the hit
+    for (let i = 0; i <= shipsArray.length; i++) {
+      // use the first key of the current ship obj (Object.keys is used so that it can be dynamic)
+      const {
+        [Object.keys(shipsArray[i])[0]]: { gridPosition },
+      } = shipsArray[i];
+
+      // condition when a position has been found that matches with the attackedPos
+      if (
+        (foundPos = gridPosition.findIndex((position) => position === gridPos))
+      ) {
+        hitPosition = foundPos;
+        hitShip = shipsArray[i];
+
+        return {
+          ship: hitShip,
+          hitIndexPos: hitPosition,
+          hitGridPos: hitPosition + 1,
+        };
+      }
+
+      // handle here when an attacked position does not find a ship
+      // do something to show a missed hit on the grid
+      return { ship: null, hitGridPos };
+    }
+  }
+
+  // HANDLES RECEIVING AN ATTACK
+  receiveAttack(attackedPosition, shipStates) {
+    try {
+      let pos = attackedPosition;
+      // destructure the ship states and put them in an array for inspection
+      const { carrier, cruiser, destroyer, submarine } = { ...shipStates };
+      let shipsArray = [carrier, cruiser, destroyer, submarine];
+
+      // get the details about the ship that was hit
+      const { ship, hitIndexPos = null, hitGridPos } = this.checkShips(
+        shipsArray,
+        pos
+      );
+      // check the grid positions and compare to the received attack position. If they match, run the hit function on the ship that contains that position using the current hitStatus state and then updating the hitStatus afterwards
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   // takes in click coordinates: the GridCell id (eg. "3" from <div id="P-3"></div>)
@@ -115,9 +170,9 @@ export default class Gameboard extends Component {
     ];
 
     // formats the ship key for easy state management
-    let nextShipKey = this.getNextShipKey(nextShip.type);
+    // let nextShipKey = this.getNextShipKey(nextShip.type);
     // setState here so that the gameboard component gets re-rendered
-    this.setState({ [nextShipKey]: { ...nextShip } });
+    this.setState({ [nextShip]: { ...nextShip } });
 
     //tell user that all ships are placed
     if (this.isFleetPlaced(this.state)) {
@@ -132,10 +187,10 @@ export default class Gameboard extends Component {
   hasShip(gridcellID) {
     // all the grid positions of all the ships
     let shipGridPositions = [
-      ...this.state.userCarrier.gridPosition,
-      ...this.state.userCruiser.gridPosition,
-      ...this.state.userDestroyer.gridPosition,
-      ...this.state.userSubmarine.gridPosition,
+      ...this.state.carrier.gridPosition,
+      ...this.state.cruiser.gridPosition,
+      ...this.state.destroyer.gridPosition,
+      ...this.state.submarine.gridPosition,
     ];
 
     // this value is passed down as a prop to the gridCell component
