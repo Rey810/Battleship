@@ -27,7 +27,7 @@ describe("Gameboard component functionality", () => {
   });
 
   describe("checkAttackAction()", () => {
-    it.only("returns a hit ship and the position", () => {
+    it("returns a hit ship and the position", () => {
       let gameboard = new Gameboard();
       let shipsArray = [
         {
@@ -45,16 +45,15 @@ describe("Gameboard component functionality", () => {
     });
   });
 
-  describe("receiveAttack()", () => {
+  describe("handleAttack()", () => {
     let gameboard = new Gameboard();
     // mock state for a carrier
     let shipState = {
       type: "carrier",
       hitStatus: [false, false, false, false, false],
+      gridPosition: [52, 53, 54, 55, 56],
     };
 
-    it("returns the an object of the old hitStatus vs the new hit Status", () => {
-      expect(gameboard.receiveAttack(1, shipState)).toMatchObject({});
-    });
+    it("returns an object of the old hitStatus vs the new hit Status", () => {});
   });
 });

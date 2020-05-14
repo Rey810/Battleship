@@ -29,11 +29,11 @@ export default class Gameboard extends Component {
     cruiser: shipFactory("cruiser"),
     destroyer: shipFactory("destroyer"),
     submarine: shipFactory("submarine"),
-    // conputer ships' state
-    computerCarrier: shipFactory("carrier"),
-    computerCruiser: shipFactory("cruiser"),
-    computerDestroyer: shipFactory("destroyer"),
-    computerSubmarine: shipFactory("submarine"),
+    // // conputer ships' state
+    // computerCarrier: shipFactory("carrier"),
+    // computerCruiser: shipFactory("cruiser"),
+    // computerDestroyer: shipFactory("destroyer"),
+    // computerSubmarine: shipFactory("submarine"),
   };
 
   // 3 PLACE SHIP FUNCTIONS + 1 fleet placement status check function
@@ -126,14 +126,13 @@ export default class Gameboard extends Component {
         };
       }
 
-      // handle here when an attacked position does not find a ship
-      // do something to show a missed hit on the grid
+      // this is returned when a hit on a ship is not successful
       return { ship: null, hitGridPos };
     }
   }
 
   // HANDLES RECEIVING AN ATTACK
-  receiveAttack(attackedPosition, shipStates) {
+  handleAttack(attackedPosition, shipStates) {
     try {
       let pos = attackedPosition;
       // destructure the ship states and put them in an array for inspection
@@ -141,11 +140,20 @@ export default class Gameboard extends Component {
       let shipsArray = [carrier, cruiser, destroyer, submarine];
 
       // get the details about the ship that was hit
+      // ship will equal null if the attack missed the ship
       const { ship, hitIndexPos = null, hitGridPos } = this.checkShips(
         shipsArray,
         pos
       );
-      // check the grid positions and compare to the received attack position. If they match, run the hit function on the ship that contains that position using the current hitStatus state and then updating the hitStatus afterwards
+
+      if (ship === null) {
+        // handle unsuccessful attack
+        // DOM change (up date the state of the grid cell where the hit took place)
+      } else {
+        // handle successful attack
+        // apply hit() to ship
+        ship.hit(hitIndexPos);
+      }
     } catch (e) {
       console.log(e);
     }

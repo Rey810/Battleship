@@ -31,7 +31,7 @@ const shipFactory = (shipTypeStringInput) => {
   let isPlaced = false;
 
   // functions
-  function hit(posNum) {
+  function hit(currentShipHitStatusState, posNum) {
     // ensures that a number was passed as a variable
     if (typeof posNum !== "number") {
       throw new Error("You need to pass a number!");
@@ -41,14 +41,15 @@ const shipFactory = (shipTypeStringInput) => {
     // Abbreviations:
     // 1. afterStatus   =   after hit health status
     // 2. beforeStatus  =   before hit health status
-    let beforeStatus = hitStatus;
+    let beforeStatus = currentShipHitStatusState;
     let targetPosition = posNum;
     let isHit = false;
     let afterStatus = [];
     // hit can only work if it's within the range of the health status array length
     try {
-      if (targetPosition < hitStatus.length && targetPosition >= 0) {
-        afterStatus = [...beforeStatus, (beforeStatus[targetPosition] = true)];
+      if (targetPosition < beforeStatus.length && targetPosition >= 0) {
+        afterStatus = [...beforeStatus];
+        afterStatus[targetPosition] = true;
         isHit = true;
         hitStatus = afterStatus;
       } else {
@@ -57,11 +58,11 @@ const shipFactory = (shipTypeStringInput) => {
         throw new Error("Your hit cannot be placed on the health status array");
       }
     } catch (err) {
-      //console.log(err);
+      console.log(err);
       // handle error
     }
 
-    return { isHit, position: targetPosition };
+    return { isHit, position: targetPosition, afterStatus };
   }
 
   function isSunk(shipHitStatus = hitStatus) {

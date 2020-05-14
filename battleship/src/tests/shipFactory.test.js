@@ -44,6 +44,7 @@ it("should have a length matching the type of ship passed in", () => {
 describe("ship factory functions", () => {
   //checks hit()
   describe("hit()", () => {
+    let hitStatus = [false, false, false, false, false];
     //checks hit()
     it("makes sure that a hit function exists", () => {
       expect(typeof shipFactory("").hit).toBe("function");
@@ -57,27 +58,34 @@ describe("ship factory functions", () => {
 
     it("ensures no change to health status if erroneous input is passed to hit()", () => {
       let carrier = shipFactory("carrier");
+      let hitStatus = [false, false, false, false, false];
       // a hit at pos 10 can't work as the length of the hitStatus array is only 5
-      carrier.hit(10);
+      carrier.hit(hitStatus, 10);
       expect(carrier.hitStatus).toEqual([false, false, false, false, false]);
     });
 
-    it("records a hit and change in the health status of ship", () => {
+    it("records a hit and change in the health status of ship", async () => {
       let carrier = shipFactory("carrier");
-      carrier.hit(1);
-      expect(carrier.hitStatus).toEqual([false, true, false, false, false]);
+      let currHitStatus = [false, false, false, false, false];
+      let afterHit = carrier.hit(currHitStatus, 1);
+
+      expect(afterHit.afterStatus).toEqual([false, true, false, false, false]);
     });
 
     it("records multiple hits and related changes in the hitStatus", () => {
       let carrier = shipFactory("carrier");
-      carrier.hit(4);
-      expect(carrier.hitStatus).toEqual([false, false, false, false, true]);
+      let hitStatus = [false, false, false, false, false];
+      let afterHit = carrier.hit(hitStatus, 4);
+
+      expect(afterHit.afterStatus).toEqual([false, false, false, false, true]);
     });
 
     it("ensures preceding test is not a false positive", () => {
       let carrier = shipFactory("carrier");
-      carrier.hit(1);
-      expect(carrier.hitStatus).not.toEqual([
+      let hitStatus = [false, false, false, false, false];
+      let afterHit = carrier.hit(hitStatus, 1);
+
+      expect(afterHit.afterStatus).not.toEqual([
         false,
         false,
         false,
