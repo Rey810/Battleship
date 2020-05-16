@@ -12,6 +12,7 @@ export default class Gameboard extends Component {
       the shipFactory function is used to populate the ship data for the user and the computer
       */
     placedAllShips: false,
+    isFleetSunk: false,
     isGameOver: false,
     hitGridPositions: [],
     // each shipFactory returns the following:
@@ -33,7 +34,7 @@ export default class Gameboard extends Component {
     // computerSubmarine: shipFactory("submarine"),
   };
 
-  // 3 PLACE SHIP FUNCTIONS + 1 fleet placement status check function
+  // 2 PLACE SHIP FUNCTIONS + 1 fleet placement status check function
   // returns the next ship object based on it's isPlaced boolean
   getNextShip(state) {
     const { carrier, cruiser, destroyer, submarine } = {
@@ -88,6 +89,9 @@ export default class Gameboard extends Component {
     return shipsArray.every((shipObj) => shipObj.isPlaced === true);
   }
 
+  // HANDLE ATTACK UTILITY FUNCTIONS
+  // 1. checkAttackAction: checks to see if there is a ship at the attack clicked position . Returns a ship object, the position on the ship that was hit (an index number which will be between 0 and the ships length - 1) and the attacked grid position
+  // 2. applyHitToShipStatus: takes the returned ship object from checkAttackAction and the position on it's index that was hit and updates the ships hitStatus using the shipFactory #hit method
   checkAttackAction(arrayOfShips, attackedPos) {
     // for each ship, check its gridpositions and see if it has a grid position that matches attackedPosition
     let shipsArray = arrayOfShips;
@@ -130,21 +134,52 @@ export default class Gameboard extends Component {
       const { hitStatus } = { ...shipObj };
       const { afterStatus } = shipObj.hit(hitStatus, hitIndexPos);
       // set the ship health status state
-      this.setState({
-        [shipObj.type]: {
-          ...this.state[shipObj.type],
-          hitStatus: afterStatus,
+      this.setState(
+        {
+          [shipObj.type]: {
+            ...this.state[shipObj.type],
+            hitStatus: afterStatus,
+          },
         },
-      });
+        async () => {
+          await this.isShipSunk(shipObj);
+          this.isFleetSunk();
+        }
+      );
       alert("You hit a ship!");
     } catch (e) {
       console.log(e);
     }
   }
 
+  isShipSunk(shipObj) {
+    let ship = { ...this.state[shipObj.type] };
+    Promise.resolve(ship.isSunkCheck(ship.hitStatus)).then((sunkStatus) =>
+      this.setState({ [ship.type]: { ...ship, isSunk: sunkStatus } })
+    );
+  }
+
+  isFleetSunk() {
+    const { carrier, cruiser, destroyer, submarine } = this.state;
+    let fleetStatus = [
+      carrier.isSunk,
+      cruiser.isSunk,
+      destroyer.isSunk,
+      submarine.isSunk,
+    ];
+    if (fleetStatus.every((status) => status === true)) {
+      this.setState({ isFleetSunk: true });
+    } else {
+      return false;
+    }
+  }
+
   // HANDLES RECEIVING AN ATTACK
+  // does 3 things:
+  // 1. Finds a ship object that is hit
+  // 2. Applies hit to the ships hit status
+  // 3. updates the hit status state and the hitGridPositions state
   handleAttack(attackedPosition, shipStates = this.state) {
-    console.log("attacked pos", attackedPosition);
     try {
       let pos = attackedPosition;
       // destructure the ship states and put them in an array for inspection
@@ -206,7 +241,6 @@ export default class Gameboard extends Component {
   handleClick = (e) => {
     let clickedGridPosID = e.target.id;
     let numID = parseInt(clickedGridPosID.replace("P", ""), 10);
-    console.log("numID", numID);
     if (this.isFleetPlaced(this.state)) {
       alert("all ships placed, will now run handleAttack");
       this.handleAttack(numID, this.state);

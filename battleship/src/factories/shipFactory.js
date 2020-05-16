@@ -29,6 +29,7 @@ const shipFactory = (shipTypeStringInput) => {
   let hitStatus = Array(length).fill(false);
   let gridPosition = [];
   let isPlaced = false;
+  let isSunk = false;
 
   // functions
   function hit(currentShipHitStatusState, posNum) {
@@ -65,13 +66,22 @@ const shipFactory = (shipTypeStringInput) => {
     return { isHit, position: targetPosition, afterStatus };
   }
 
-  function isSunk(shipHitStatus = hitStatus) {
+  function isSunkCheck(shipHitStatus) {
     console.log("hit status", shipHitStatus);
     let currenthitStatus = shipHitStatus;
     return currenthitStatus.every((status) => status === true);
   }
 
-  return { type, length, hitStatus, isSunk, hit, gridPosition, isPlaced };
+  return {
+    type,
+    length,
+    hitStatus,
+    isSunk,
+    isSunkCheck,
+    hit,
+    gridPosition,
+    isPlaced,
+  };
 };
 
 // REMEMBER you only have to test your object’s public interface. Only methods or properties that are used outside of your ‘ship’ object need unit tests.
