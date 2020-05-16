@@ -26,21 +26,55 @@ describe("Gameboard component functionality", () => {
     });
   });
 
-  describe("checkAttackAction()", () => {
-    it("returns a hit ship and the position", () => {
+  describe("isFleetPlaced()", () => {
+    it("returns false when the fleet IS NOT placed", () => {
+      let state = {
+        carrier: { isPlaced: false },
+        cruiser: { isPlaced: false },
+        destroyer: { isPlaced: false },
+        submarine: { isPlaced: false },
+      };
       let gameboard = new Gameboard();
-      let shipsArray = [
-        {
-          carrier: { gridPosition: [1, 2, 3, 4, 5] },
-        },
-        {
-          cruiser: { gridPosition: [50, 51, 52, 53] },
-        },
-      ];
+      let booleanResult = gameboard.isFleetPlaced(state);
+      expect(booleanResult).toBe(false);
+    });
+
+    it("returns true when the fleet IS placed", () => {
+      let state = {
+        carrier: { isPlaced: true },
+        cruiser: { isPlaced: true },
+        destroyer: { isPlaced: true },
+        submarine: { isPlaced: true },
+      };
+      let gameboard = new Gameboard();
+      let booleanResult = gameboard.isFleetPlaced(state);
+      expect(booleanResult).toBe(true);
+    });
+  });
+
+  describe("checkAttackAction()", () => {
+    let gameboard = new Gameboard();
+    let shipsArray = [
+      {
+        type: "carrier",
+        gridPosition: [1, 2, 3, 4, 5],
+      },
+      {
+        type: "cruiser",
+        gridPosition: [50, 51, 52, 53],
+      },
+    ];
+    it("returns a hit ship and the position", () => {
       expect(gameboard.checkAttackAction(shipsArray, 4)).toMatchObject({
-        ship: { carrier: { gridPosition: [1, 2, 3, 4, 5] } },
+        ship: { type: "carrier", gridPosition: [1, 2, 3, 4, 5] },
         hitIndexPos: 3,
         hitGridPos: 4,
+      });
+    });
+    it("returns a null ship when an attack misses", () => {
+      expect(gameboard.checkAttackAction(shipsArray, 25)).toMatchObject({
+        ship: null,
+        hitGridPos: 25,
       });
     });
   });

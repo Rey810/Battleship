@@ -11,11 +11,9 @@ export default class Gameboard extends Component {
       a complete ship status state is kept here 
       the shipFactory function is used to populate the ship data for the user and the computer
       */
-    isUserTurn: true,
-    isComputerTurn: false,
-    userIsPlacedAllShips: false,
-    computerIsPlacedAllShips: false,
+    placedAllShips: false,
     isGameOver: false,
+    hitGridPositions: [],
     // each shipFactory returns the following:
     // 1. isPlaced: Boolean
     // 2. gridPosition: Array
@@ -23,7 +21,6 @@ export default class Gameboard extends Component {
     // 4. length: Number
     // 5. Type: String
     // 6. hitStatus
-
     // user ships' state
     carrier: shipFactory("carrier"),
     cruiser: shipFactory("cruiser"),
@@ -54,13 +51,6 @@ export default class Gameboard extends Component {
     // the ship which has not been placed
     return nextShip;
   }
-
-  // returns a formatted key for use in setting the state when a ship is placed
-  // commented out due to a simplified key name which doesn't require formatting
-  // getNextShipKey(shipType) {
-  //   // derive nextShip key name from it's type
-  //   return `user${shipType[0].toUpperCase()}${shipType.slice(1)}`;
-  // }
 
   // builds the grid position array for the next ship to be placed
   getNextShipGP(arr, num, length) {
@@ -106,66 +96,88 @@ export default class Gameboard extends Component {
     let hitShip;
     let foundPos;
     // check each ship and return out of the function withe ship obj, the index position for the hit and the grid position for the hit
-    for (let i = 0; i <= shipsArray.length; i++) {
-      // use the first key of the current ship obj (Object.keys is used so that it can be dynamic)
-      const {
-        [Object.keys(shipsArray[i])[0]]: { gridPosition },
-      } = shipsArray[i];
-
-      // condition when a position has been found that matches with the attackedPos
-      if (
-        (foundPos = gridPosition.findIndex((position) => position === gridPos))
-      ) {
-        hitPosition = foundPos;
-        hitShip = shipsArray[i];
-
-        return {
-          ship: hitShip,
-          hitIndexPos: hitPosition,
-          hitGridPos: hitPosition + 1,
-        };
-      }
-
-      // this is returned when a hit on a ship is not successful
-      return { ship: null, hitGridPos };
-    }
-  }
-
-  // HANDLES RECEIVING AN ATTACK
-  handleAttack(attackedPosition, shipStates) {
     try {
-      let pos = attackedPosition;
-      // destructure the ship states and put them in an array for inspection
-      const { carrier, cruiser, destroyer, submarine } = { ...shipStates };
-      let shipsArray = [carrier, cruiser, destroyer, submarine];
-
-      // get the details about the ship that was hit
-      // ship will equal null if the attack missed the ship
-      const { ship, hitIndexPos = null, hitGridPos } = this.checkShips(
-        shipsArray,
-        pos
-      );
-
-      if (ship === null) {
-        // handle unsuccessful attack
-        // DOM change (up date the state of the grid cell where the hit took place)
-      } else {
-        // handle successful attack
-        // apply hit() to ship
-        ship.hit(hitIndexPos);
+      for (let i = 0; i < shipsArray.length; i++) {
+        // use the first key of the current ship obj (Object.keys is used so that it can be dynamic)
+        console.log("shipsArray[i]", shipsArray[i]);
+        const { gridPosition } = shipsArray[i];
+        console.table(gridPosition);
+        // condition when a position has been found that matches with the attackedPos
+        foundPos = gridPosition.findIndex((position) => position === gridPos);
+        // -1 is returned if an index for the condition is not found
+        if (foundPos !== -1) {
+          hitPosition = foundPos;
+          hitShip = shipsArray[i];
+          console.log("foundPos", foundPos);
+          return {
+            ship: hitShip,
+            hitIndexPos: hitPosition,
+            hitGridPos: attackedPos,
+          };
+        }
       }
+      // this is returned when a hit on a ship is not successful
+      return { ship: null, hitGridPos: attackedPos };
     } catch (e) {
       console.log(e);
     }
   }
 
-  // takes in click coordinates: the GridCell id (eg. "3" from <div id="P-3"></div>)
-  // and then it places a ship starting at the selected position
-  handleClick = (e) => {
-    // e.target is the GridCell component's html element
-    let clickedID = e.target.id;
-    // remove the letter from the clicked id to make adding up easier
-    let numID = parseInt(clickedID.replace("P", ""), 10);
+  applyHitToShipHitStatus(shipObj, hitIndexPos) {
+    // handle successful attack
+    // apply hit() to ship. This actually updates the hitStatus of the ship
+    try {
+      const { hitStatus } = { ...shipObj };
+      const { afterStatus } = shipObj.hit(hitStatus, hitIndexPos);
+      // set the ship health status state
+      this.setState({
+        [shipObj.type]: {
+          ...this.state[shipObj.type],
+          hitStatus: afterStatus,
+        },
+      });
+      alert("You hit a ship!");
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  // HANDLES RECEIVING AN ATTACK
+  handleAttack(attackedPosition, shipStates = this.state) {
+    console.log("attacked pos", attackedPosition);
+    try {
+      let pos = attackedPosition;
+      // destructure the ship states and put them in an array for inspection
+      const { carrier, cruiser, destroyer, submarine } = {
+        ...shipStates,
+      };
+      let shipsArray = [carrier, cruiser, destroyer, submarine];
+
+      // get the details about the ship that was hit
+      // ship will equal null if the attack missed the ship
+      const { ship, hitIndexPos = null, hitGridPos } = this.checkAttackAction(
+        shipsArray,
+        pos
+      );
+      if (ship === null) {
+        // handle unsuccessful attack
+        // DOM change (up date the state of the grid cell where the hit took place)
+        alert("You missed a ship!");
+      } else {
+        this.applyHitToShipHitStatus(ship, hitIndexPos);
+      }
+      // update the hitGridposition state
+      this.setState({
+        hitGridPositions: [...this.state.hitGridPositions, hitGridPos],
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  // runs when there is a grid click but not all the ships are placed yet
+  placeShip(clickedGridPos) {
+    let numID = clickedGridPos;
 
     // the nextShip is chosen by it's isPlaced boolean
     let nextShip = this.getNextShip(this.state);
@@ -180,12 +192,27 @@ export default class Gameboard extends Component {
     // formats the ship key for easy state management
     // let nextShipKey = this.getNextShipKey(nextShip.type);
     // setState here so that the gameboard component gets re-rendered
-    this.setState({ [nextShip]: { ...nextShip } });
+    console.log("next ship", nextShip);
+    this.setState({ [nextShip.type]: { ...nextShip } });
 
     //tell user that all ships are placed
     if (this.isFleetPlaced(this.state)) {
-      this.setState({ userIsPlacedAllShips: true });
-      alert("all ships placed!");
+      this.setState({ placedAllShips: true });
+    }
+  }
+
+  // takes in click coordinates: the GridCell id (eg. "3" from <div id="P-3"></div>)
+  // and then it places a ship starting at the selected position
+  handleClick = (e) => {
+    let clickedGridPosID = e.target.id;
+    let numID = parseInt(clickedGridPosID.replace("P", ""), 10);
+    console.log("numID", numID);
+    if (this.isFleetPlaced(this.state)) {
+      alert("all ships placed, will now run handleAttack");
+      this.handleAttack(numID, this.state);
+    } else {
+      console.warn("not all ships placed, will place ship now");
+      this.placeShip(numID);
     }
   };
 

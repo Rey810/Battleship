@@ -1,4 +1,4 @@
-import shipFactory from "../factories/shipFactory";
+import shipFactory from "../../factories/shipFactory";
 
 // checks the fundamental type and returns of the factory
 it("the ship factory should be an object creator", () => {
