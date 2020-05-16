@@ -143,7 +143,7 @@ export default class Gameboard extends Component {
         },
         async () => {
           await this.isShipSunk(shipObj);
-          this.isFleetSunk();
+          this.isFleetSunk(this.state);
         }
       );
       alert("You hit a ship!");
@@ -159,8 +159,8 @@ export default class Gameboard extends Component {
     );
   }
 
-  isFleetSunk() {
-    const { carrier, cruiser, destroyer, submarine } = this.state;
+  isFleetSunk(state) {
+    const { carrier, cruiser, destroyer, submarine } = state;
     let fleetStatus = [
       carrier.isSunk,
       cruiser.isSunk,
