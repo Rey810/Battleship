@@ -4,13 +4,18 @@ import Gameboard from "../components/Gameboard";
 class Game extends Component {
   state = {
     userName: "User",
-    computerName: "Computer",
+    computerName: "A Really Smart AI",
     isUserTurn: true,
     bothFleetsSet: false,
+    // mayvbe have a game reset state here
   };
 
   updateBothFleetsSet = () => {
     this.setState({ bothFleetsSet: true });
+  };
+
+  resetGame = () => {
+    this.setState({ resetGame: true });
   };
 
   changeTurn = () => {
@@ -26,6 +31,7 @@ class Game extends Component {
       <>
         <Gameboard
           who={userName}
+          opponent={computerName}
           isUserTurn={isUserTurn}
           isUserBoard={true}
           changeTurn={this.changeTurn}
@@ -33,6 +39,7 @@ class Game extends Component {
         />
         <Gameboard
           who={computerName}
+          opponent={userName}
           isUserTurn={isUserTurn}
           isUserBoard={false}
           changeTurn={this.changeTurn}

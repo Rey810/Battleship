@@ -29,6 +29,10 @@ button {
   border: none;
 }
 
+.light-border {
+  border: 1px solid #333;
+}
+
 .round {
   border-radius: 50%;
 }
@@ -278,9 +282,5 @@ button {
 
 .italic-font {
   font-style: italic;
-}
-
-* {
-  border: 1px solid red;
 }
 /*# sourceMappingURL=index.css.map */

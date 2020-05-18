@@ -30,7 +30,7 @@ export default class GridCell extends Component {
     return (
       <div
         id={id}
-        className={`grid-cell 
+        className={`grid-cell light-border
         ${hasShipClass} ${hasHitClass} ${shipHitClass}`}
         onMouseEnter={this.addHoveringClass}
         onMouseLeave={this.removeHoveringClass}

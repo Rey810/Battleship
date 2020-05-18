@@ -2,6 +2,7 @@
 // ploce ships at specific coordinates by calling the ship factory function
 import React, { Component } from "react";
 import { randomNumber } from "../utils/util";
+import Swal from "sweetalert2";
 import shipFactory from "../factories/shipFactory";
 import GridCell from "../components/GridCell";
 
@@ -190,7 +191,16 @@ export default class Gameboard extends Component {
       submarine.isSunk,
     ];
     if (fleetStatus.every((status) => status === true)) {
-      this.setState({ isFleetSunk: true });
+      this.setState({ isFleetSunk: true }, () => {
+        // fire a gameover message
+        Swal.fire({
+          title: "Victory!",
+          text: `${this.props.opponent} is the Winner!`,
+          icon: "info",
+        });
+
+        // setState to the initial state for this board, the other board, and the game component
+      });
     } else {
       return false;
     }
@@ -309,11 +319,20 @@ export default class Gameboard extends Component {
       ...this.state.submarine.gridPosition,
     ];
 
+    // if this is the computer board then it can't add a hasShip class as this will give it away to the user so the function should just return
+    if (this.props.isUserBoard === false) {
+      return "";
+    }
+
     // this value is passed down as a prop to the gridCell component
     // the returned string is a css class name
     return shipGridPositions.some((position) => position === gridcellID)
       ? "hasShip"
       : "";
+  }
+
+  inShipHitPositions(gridCellID) {
+    return this.state.hitShipPositions.some((pos) => pos === gridCellID);
   }
 
   isHit(gridcellID, state = this.state.hitGridPositions) {
@@ -324,7 +343,7 @@ export default class Gameboard extends Component {
   }
 
   isShipHitAt(gridCellID) {
-    if (this.hasShip(gridCellID) === "hasShip" && this.isHit(gridCellID)) {
+    if (this.inShipHitPositions(gridCellID) && this.isHit(gridCellID)) {
       return "shipHit";
     } else {
       return "";
