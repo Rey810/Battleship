@@ -6,7 +6,7 @@ import Gameboard from "../../components/Gameboard";
 
 describe("gridcell functionality", () => {
   it("hovering class is applied on grid cell hover", () => {
-    const { container } = render(<GridCell id="P-8" />);
+    const { container } = render(<GridCell id="P8" />);
     const gridcell = container.firstChild;
     expect(gridcell.classList.contains("grid-cell")).toBe(true);
 
