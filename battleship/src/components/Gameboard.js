@@ -15,23 +15,21 @@ export default class Gameboard extends Component {
     isFleetSunk: false,
     isGameOver: false,
     hitGridPositions: [],
+    hitShipPositions: [],
     // each shipFactory returns the following:
     // 1. isPlaced: Boolean
     // 2. gridPosition: Array
     // 3. isSunk: function
     // 4. length: Number
     // 5. Type: String
-    // 6. hitStatus
+    // 6. hitStatus: Array of booleans
+    // 7. isSunkCheck: function
+    // 8. hit: function
     // user ships' state
     carrier: shipFactory("carrier"),
     cruiser: shipFactory("cruiser"),
     destroyer: shipFactory("destroyer"),
     submarine: shipFactory("submarine"),
-    // // conputer ships' state
-    // computerCarrier: shipFactory("carrier"),
-    // computerCruiser: shipFactory("cruiser"),
-    // computerDestroyer: shipFactory("destroyer"),
-    // computerSubmarine: shipFactory("submarine"),
   };
 
   // 2 PLACE SHIP FUNCTIONS + 1 fleet placement status check function
@@ -146,7 +144,7 @@ export default class Gameboard extends Component {
           this.isFleetSunk(this.state);
         }
       );
-      alert("You hit a ship!");
+      // alert("You hit a ship!");
     } catch (e) {
       console.log(e);
     }
@@ -197,11 +195,15 @@ export default class Gameboard extends Component {
       if (ship === null) {
         // handle unsuccessful attack
         // DOM change (up date the state of the grid cell where the hit took place)
-        alert("You missed a ship!");
+        // alert("You missed a ship!");
       } else {
+        // update the container for all the positions that hit ships
+        this.setState({
+          hitShipPositions: [...this.state.hitShipPositions, hitGridPos],
+        });
         this.applyHitToShipHitStatus(ship, hitIndexPos);
       }
-      // update the hitGridposition state
+      // update the the container for the attacked grid positions
       this.setState({
         hitGridPositions: [...this.state.hitGridPositions, hitGridPos],
       });
@@ -242,7 +244,7 @@ export default class Gameboard extends Component {
     let clickedGridPosID = e.target.id;
     let numID = parseInt(clickedGridPosID.replace("P", ""), 10);
     if (this.isFleetPlaced(this.state)) {
-      alert("all ships placed, will now run handleAttack");
+      // alert("all ships placed, will now run handleAttack");
       this.handleAttack(numID, this.state);
     } else {
       console.warn("not all ships placed, will place ship now");
@@ -269,6 +271,21 @@ export default class Gameboard extends Component {
       : "";
   }
 
+  isHit(gridcellID, state = this.state.hitGridPositions) {
+    let gridPositionsHit = [...state];
+    return gridPositionsHit.some((position) => position === gridcellID)
+      ? "isHit"
+      : "";
+  }
+
+  isShipHitAt(gridCellID) {
+    if (this.hasShip(gridCellID) === "hasShip" && this.isHit(gridCellID)) {
+      return "shipHit";
+    } else {
+      return "";
+    }
+  }
+
   render() {
     // the container will contain each GridCell with it's associated props
     let gridCellsContainer = [];
@@ -279,7 +296,9 @@ export default class Gameboard extends Component {
           key={i}
           id={`P${i}`}
           handleClick={this.handleClick}
-          hasShip={this.hasShip(i)}
+          hasShipClass={this.hasShip(i)}
+          hasHitClass={this.isHit(i)}
+          shipHitClass={this.isShipHitAt(i)}
         />
       );
     }

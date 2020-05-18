@@ -5,11 +5,6 @@ import GridCell from "../../components/GridCell";
 import Gameboard from "../../components/Gameboard";
 
 describe("gridcell functionality", () => {
-  it("grid cell has a handleHover function", () => {
-    let GCinstance = new GridCell();
-    expect(typeof GCinstance.handleHover).toBe("function");
-  });
-
   it("hovering class is applied on grid cell hover", () => {
     const { container } = render(<GridCell id="P-8" />);
     const gridcell = container.firstChild;

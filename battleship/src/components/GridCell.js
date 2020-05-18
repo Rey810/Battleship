@@ -10,21 +10,34 @@ export default class GridCell extends Component {
   //   classList: [],
   // };
 
-  handleHover(e) {
-    return e.target.classList.toggle("hovering");
+  addHoveringClass(e) {
+    return e.target.classList.add("hovering");
+  }
+
+  removeHoveringClass(e) {
+    return e.target.classList.remove("hovering");
   }
 
   render() {
-    const { id, handleClick, hasShip } = this.props;
+    const {
+      id,
+      handleClick,
+      hasShipClass,
+      hasHitClass,
+      shipHitClass,
+    } = this.props;
 
     return (
       <div
         id={id}
         className={`grid-cell 
-        ${hasShip}`}
-        onMouseEnter={this.handleHover}
-        onMouseLeave={this.handleHover}
-        onClick={handleClick}
+        ${hasShipClass} ${hasHitClass} ${shipHitClass}`}
+        onMouseEnter={this.addHoveringClass}
+        onMouseLeave={this.removeHoveringClass}
+        onClick={(e) => {
+          handleClick(e);
+          this.removeHoveringClass(e);
+        }}
       ></div>
     );
   }

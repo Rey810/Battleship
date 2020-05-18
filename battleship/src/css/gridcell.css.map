@@ -1,6 +1,6 @@
 {
     "version": 3,
-    "mappings": "AAAA,AAAA,QAAQ,CAAC;EACP,gBAAgB,EAAE,OAAgB;CACnC",
+    "mappings": "AAAA,AAAA,QAAQ,CAAC;EACP,gBAAgB,EAAE,OAAgB;CACnC;;AAED,AAAA,MAAM,CAAC;EACL,gBAAgB,EAAE,GAAG;CACtB;;AAED,AAAA,QAAQ,CAAC;EACP,gBAAgB,EAAE,mBAAmB;CACtC",
     "sources": [
         "gridcell.scss"
     ],

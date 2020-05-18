@@ -1,4 +1,12 @@
 .hasShip {
   background-color: #5dd15d;
 }
+
+.isHit {
+  background-color: red;
+}
+
+.shipHit {
+  background-color: rgba(0, 0, 0, 0.76);
+}
 /*# sourceMappingURL=gridcell.css.map */
