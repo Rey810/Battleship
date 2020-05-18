@@ -1,6 +1,7 @@
 // this will be the board that controls the game state as well as the state of the user and the computer
 // ploce ships at specific coordinates by calling the ship factory function
 import React, { Component } from "react";
+import { randomNumber } from "../utils/util";
 import shipFactory from "../factories/shipFactory";
 import GridCell from "../components/GridCell";
 
@@ -31,6 +32,29 @@ export default class Gameboard extends Component {
     destroyer: shipFactory("destroyer"),
     submarine: shipFactory("submarine"),
   };
+
+  componentDidMount() {
+    // if this is the gameboard, place all the ships at random
+    if (
+      this.props.isUserBoard === false &&
+      this.state.placedAllShips === false
+    ) {
+      // place the ships at random on the board
+      console.log(
+        "I am inside the componentDidMount of the computer gameboard"
+      );
+      // NEXT STEP: random ship placement within constraints
+      // numbers must be between 1 and 100
+      // carrier: can't be bigger than 6
+      // cruiser: can't be bigger than 7
+      // destroyer: can't be bigger than 8
+      // submarine: can't be bigger than 9
+      this.placeShip(3);
+      this.placeShip(25);
+      this.placeShip(72);
+      this.placeShip(51);
+    }
+  }
 
   // 2 PLACE SHIP FUNCTIONS + 1 fleet placement status check function
   // returns the next ship object based on it's isPlaced boolean
@@ -178,8 +202,12 @@ export default class Gameboard extends Component {
   // 2. Applies hit to the ships hit status
   // 3. updates the hit status state and the hitGridPositions state
   handleAttack(attackedPosition, shipStates = this.state) {
+    const { changeTurn } = this.props;
     try {
+      // returns out of function if an old grid position is clicked again
       let pos = attackedPosition;
+      let hitPositions = [...this.state.hitGridPositions];
+      if (hitPositions.some((position) => position === pos)) return;
       // destructure the ship states and put them in an array for inspection
       const { carrier, cruiser, destroyer, submarine } = {
         ...shipStates,
@@ -207,6 +235,7 @@ export default class Gameboard extends Component {
       this.setState({
         hitGridPositions: [...this.state.hitGridPositions, hitGridPos],
       });
+      changeTurn();
     } catch (e) {
       console.log(e);
     }
@@ -216,6 +245,11 @@ export default class Gameboard extends Component {
   placeShip(clickedGridPos) {
     let numID = clickedGridPos;
 
+    // make a check so that ships need to be placed on open grid positions
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
     // the nextShip is chosen by it's isPlaced boolean
     let nextShip = this.getNextShip(this.state);
     // the value changes but the state is not re-rendered because setState is not used
@@ -234,6 +268,9 @@ export default class Gameboard extends Component {
 
     //tell user that all ships are placed
     if (this.isFleetPlaced(this.state)) {
+      if (this.props.isUserBoard) {
+        this.props.updateBothFleetsSet();
+      }
       this.setState({ placedAllShips: true });
     }
   }
@@ -243,11 +280,19 @@ export default class Gameboard extends Component {
   handleClick = (e) => {
     let clickedGridPosID = e.target.id;
     let numID = parseInt(clickedGridPosID.replace("P", ""), 10);
-    if (this.isFleetPlaced(this.state)) {
-      // alert("all ships placed, will now run handleAttack");
+    // check if we're on the user board. If we are AND the fleet is placed, then tell the user he can't attack his own board
+    const { isUserTurn, isUserBoard } = { ...this.props };
+    // exits function if the user is trying to attack own board
+    if (isUserTurn && isUserBoard && this.state.placedAllShips) {
+      alert("You can't attack your own board!");
+      return;
+    }
+    // if both fleets are placed, allow an attack
+    if (this.props.bothFleetsSet) {
       this.handleAttack(numID, this.state);
-    } else {
-      console.warn("not all ships placed, will place ship now");
+    }
+    // if this boards fleet is not yet set, allow a placement
+    if (!this.state.placedAllShips) {
       this.placeShip(numID);
     }
   };
@@ -287,6 +332,9 @@ export default class Gameboard extends Component {
   }
 
   render() {
+    if (this.props.isUserTurn === false && this.props.isUserBoard === true) {
+      this.handleAttack(randomNumber());
+    }
     // the container will contain each GridCell with it's associated props
     let gridCellsContainer = [];
     // I want a grid of 10x10 so this loop pushes GridCells to the container 100 times
@@ -303,6 +351,11 @@ export default class Gameboard extends Component {
       );
     }
 
-    return <div className="gameboard grid-10x10">{gridCellsContainer}</div>;
+    return (
+      <>
+        <h2>{this.props.who}</h2>
+        <div className="gameboard grid-10x10">{gridCellsContainer}</div>
+      </>
+    );
   }
 }

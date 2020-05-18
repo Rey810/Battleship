@@ -10,7 +10,8 @@ it("the ship factory should return the inputted name as it's type", () => {
 });
 
 it("the ship factory should hold the isSunk status", () => {
-  expect(shipFactory("carrier").isSunk()).toBe(false);
+  let ship = shipFactory("carrier");
+  expect(ship.isSunkCheck(ship.hitStatus)).toBe(false);
 });
 
 it("should throw an error if a string isn't passed in", () => {
@@ -98,20 +99,20 @@ describe("ship factory functions", () => {
   // checks isSunk()
   describe("isSunk()", () => {
     it("makes sure that a isSunk function exists", () => {
-      expect(typeof shipFactory("").isSunk).toBe("function");
+      expect(typeof shipFactory("").isSunkCheck).toBe("function");
     });
 
     it("the isSunk status returns true when the hitStatus is all true", () => {
       let carrier = shipFactory("carrier");
       carrier.hitStatus = Array(5).fill(true);
       console.log("test hit status", carrier.hitStatus);
-      expect(carrier.isSunk(carrier.hitStatus)).toBe(true);
+      expect(carrier.isSunkCheck(carrier.hitStatus)).toBe(true);
     });
 
     it("the isSunk status returns false when the hitStatus is not all true", () => {
       let carrier = shipFactory("carrier");
       console.table(carrier.hitStatus);
-      expect(carrier.isSunk()).toBe(false);
+      expect(carrier.isSunkCheck(carrier.hitStatus)).toBe(false);
     });
   });
 });
