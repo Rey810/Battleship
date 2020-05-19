@@ -7,7 +7,9 @@ class Game extends Component {
     computerName: "A Really Smart AI",
     isUserTurn: true,
     bothFleetsSet: false,
-    // mayvbe have a game reset state here
+    // resetGame: false,
+    userKey: 1,
+    computerKey: 100,
   };
 
   updateBothFleetsSet = () => {
@@ -15,7 +17,12 @@ class Game extends Component {
   };
 
   resetGame = () => {
-    this.setState({ resetGame: true });
+    // this.setState({ resetGame: !this.state.resetGame, isUserTurn: true });
+    this.setState({
+      bothFleetsSet: false,
+      userKey: this.state.userKey + 1,
+      computerKey: this.state.computerKey + 1,
+    });
   };
 
   changeTurn = () => {
@@ -24,26 +31,39 @@ class Game extends Component {
   };
 
   render() {
-    const { userName, computerName, isUserTurn, bothFleetsSet } = {
+    const {
+      userName,
+      computerName,
+      isUserTurn,
+      bothFleetsSet,
+      userKey,
+      computerKey,
+    } = {
       ...this.state,
     };
     return (
       <>
         <Gameboard
+          key={userKey}
           who={userName}
           opponent={computerName}
           isUserTurn={isUserTurn}
           isUserBoard={true}
           changeTurn={this.changeTurn}
           updateBothFleetsSet={this.updateBothFleetsSet}
+          // resetGameStatus={this.state.resetGame}
+          resetGameAction={this.resetGame}
         />
         <Gameboard
+          key={computerKey}
           who={computerName}
           opponent={userName}
           isUserTurn={isUserTurn}
           isUserBoard={false}
           changeTurn={this.changeTurn}
           bothFleetsSet={bothFleetsSet}
+          // resetGameStatus={this.state.resetGame}
+          resetGameAction={this.resetGame}
         />
       </>
     );

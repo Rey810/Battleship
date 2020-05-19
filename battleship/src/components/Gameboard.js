@@ -6,6 +6,17 @@ import Swal from "sweetalert2";
 import shipFactory from "../factories/shipFactory";
 import GridCell from "../components/GridCell";
 
+const defaultState = {
+  placedAllShips: false,
+  isFleetSunk: false,
+  isGameOver: false,
+  hitGridPositions: [],
+  hitShipPositions: [],
+  carrier: shipFactory("carrier"),
+  cruiser: shipFactory("cruiser"),
+  destroyer: shipFactory("destroyer"),
+  submarine: shipFactory("submarine"),
+};
 export default class Gameboard extends Component {
   state = {
     /* isPlayer or isComputer can be used to track whose board is being used
@@ -55,6 +66,20 @@ export default class Gameboard extends Component {
       this.placeShip(72);
       this.placeShip(51);
     }
+  }
+
+  componentDidUpdate() {
+    // if (this.props.resetGameStatus !== prevProps.resetGameStatus) {
+    //   console.log("I will run my shat now");
+    // }
+    if (this.props.isUserTurn === false && this.props.isUserBoard === true) {
+      this.handleAttack(randomNumber());
+    }
+    // if (this.props.resetGameStatus === true) {
+    //   // set the board state to it's initial state
+    //   // this.setState(defaultState, () => this.props.resetGameAction());
+    //   console.log("I am inside the componentDidUpdate");
+    // }
   }
 
   // 2 PLACE SHIP FUNCTIONS + 1 fleet placement status check function
@@ -198,8 +223,9 @@ export default class Gameboard extends Component {
           text: `${this.props.opponent} is the Winner!`,
           icon: "info",
         });
-
         // setState to the initial state for this board, the other board, and the game component
+        // change the resetGame state to true
+        this.props.resetGameAction();
       });
     } else {
       return false;
@@ -320,9 +346,9 @@ export default class Gameboard extends Component {
     ];
 
     // if this is the computer board then it can't add a hasShip class as this will give it away to the user so the function should just return
-    if (this.props.isUserBoard === false) {
-      return "";
-    }
+    // if (this.props.isUserBoard === false) {
+    //   return "";
+    // }
 
     // this value is passed down as a prop to the gridCell component
     // the returned string is a css class name
@@ -351,9 +377,6 @@ export default class Gameboard extends Component {
   }
 
   render() {
-    if (this.props.isUserTurn === false && this.props.isUserBoard === true) {
-      this.handleAttack(randomNumber());
-    }
     // the container will contain each GridCell with it's associated props
     let gridCellsContainer = [];
     // I want a grid of 10x10 so this loop pushes GridCells to the container 100 times
