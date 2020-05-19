@@ -6,17 +6,6 @@ import Swal from "sweetalert2";
 import shipFactory from "../factories/shipFactory";
 import GridCell from "../components/GridCell";
 
-const defaultState = {
-  placedAllShips: false,
-  isFleetSunk: false,
-  isGameOver: false,
-  hitGridPositions: [],
-  hitShipPositions: [],
-  carrier: shipFactory("carrier"),
-  cruiser: shipFactory("cruiser"),
-  destroyer: shipFactory("destroyer"),
-  submarine: shipFactory("submarine"),
-};
 export default class Gameboard extends Component {
   state = {
     /* isPlayer or isComputer can be used to track whose board is being used
@@ -75,11 +64,6 @@ export default class Gameboard extends Component {
     if (this.props.isUserTurn === false && this.props.isUserBoard === true) {
       this.handleAttack(randomNumber());
     }
-    // if (this.props.resetGameStatus === true) {
-    //   // set the board state to it's initial state
-    //   // this.setState(defaultState, () => this.props.resetGameAction());
-    //   console.log("I am inside the componentDidUpdate");
-    // }
   }
 
   // 2 PLACE SHIP FUNCTIONS + 1 fleet placement status check function
@@ -222,9 +206,10 @@ export default class Gameboard extends Component {
           title: "Victory!",
           text: `${this.props.opponent} is the Winner!`,
           icon: "info",
+          confirmButtonText: "Play Again!",
+          confirmButtonAriaLabel: "Play Again!",
         });
-        // setState to the initial state for this board, the other board, and the game component
-        // change the resetGame state to true
+        // re-mounts the components by giving each board a new key value
         this.props.resetGameAction();
       });
     } else {
@@ -337,6 +322,11 @@ export default class Gameboard extends Component {
   // compares id to an array containing all the ships' gridPositions
   // Returns "hasSHip" if the id is found in one of the grid positions
   hasShip(gridcellID) {
+    // if this is the computer board then it can't add a hasShip class as this will give it away to the user so the function should just return
+    if (this.props.isUserBoard === false) {
+      return "";
+    }
+
     // all the grid positions of all the ships
     let shipGridPositions = [
       ...this.state.carrier.gridPosition,
@@ -344,11 +334,6 @@ export default class Gameboard extends Component {
       ...this.state.destroyer.gridPosition,
       ...this.state.submarine.gridPosition,
     ];
-
-    // if this is the computer board then it can't add a hasShip class as this will give it away to the user so the function should just return
-    // if (this.props.isUserBoard === false) {
-    //   return "";
-    // }
 
     // this value is passed down as a prop to the gridCell component
     // the returned string is a css class name
