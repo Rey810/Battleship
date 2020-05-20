@@ -156,8 +156,9 @@ button {
 }
 
 .grid-cell {
-  height: 20px;
+  height: 2em;
   width: 100%;
+  min-width: 1.5em;
 }
 
 .grid-col-2 {

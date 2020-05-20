@@ -381,7 +381,9 @@ export default class Gameboard extends Component {
     return (
       <>
         <h2>{this.props.who}</h2>
-        <div className="gameboard grid-10x10">{gridCellsContainer}</div>
+        <div className="gameboard grid-10x10 center-horizontal">
+          {gridCellsContainer}
+        </div>
       </>
     );
   }
