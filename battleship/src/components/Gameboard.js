@@ -335,9 +335,9 @@ export default class Gameboard extends Component {
   // Returns "hasSHip" if the id is found in one of the grid positions
   hasShip(gridcellID) {
     // if this is the computer board then it can't add a hasShip class as this will give it away to the user so the function should just return
-    // if (this.props.isUserBoard === false) {
-    //   return "";
-    // }
+    if (this.props.isUserBoard === false) {
+      return "";
+    }
 
     // all the grid positions of all the ships
     let shipGridPositions = [
