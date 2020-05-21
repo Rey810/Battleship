@@ -1,14 +1,8 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import "../css/gridcell.css";
 
 export default class GridCell extends Component {
-  // state = {
-  //   // maybe hasShip should be in the state here
-  //   // maybe it can be determined in the gameboard component
-  //   // or it can be passed down as a prop
-  //   classList: [],
-  // };
-
   addHoveringClass(e) {
     return e.target.classList.add("hovering");
   }

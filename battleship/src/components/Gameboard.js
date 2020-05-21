@@ -191,6 +191,17 @@ export default class Gameboard extends Component {
     );
   }
 
+  // executed when this boards ships are sunk
+  updateScore() {
+    const { isUserBoard, updateScoreAction } = this.props;
+    // adds 1 to the computer's score if this is the user's board else it adds 1 to the users's score
+    if (isUserBoard) {
+      updateScoreAction("computer");
+    } else {
+      updateScoreAction("user");
+    }
+  }
+
   isFleetSunk(state) {
     const { carrier, cruiser, destroyer, submarine } = state;
     let fleetStatus = [
@@ -209,6 +220,7 @@ export default class Gameboard extends Component {
           confirmButtonText: "Play Again!",
           confirmButtonAriaLabel: "Play Again!",
         });
+        this.updateScore();
         // re-mounts the components by giving each board a new key value
         this.props.resetGameAction();
       });
@@ -323,9 +335,9 @@ export default class Gameboard extends Component {
   // Returns "hasSHip" if the id is found in one of the grid positions
   hasShip(gridcellID) {
     // if this is the computer board then it can't add a hasShip class as this will give it away to the user so the function should just return
-    if (this.props.isUserBoard === false) {
-      return "";
-    }
+    // if (this.props.isUserBoard === false) {
+    //   return "";
+    // }
 
     // all the grid positions of all the ships
     let shipGridPositions = [
