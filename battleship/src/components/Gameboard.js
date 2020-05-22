@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import { randomNumber } from "../utils/util";
 import Swal from "sweetalert2";
 import shipFactory from "../factories/shipFactory";
+import ShipsContainer from "../components/ShipsContainer";
 import GridCell from "../components/GridCell";
 
 export default class Gameboard extends Component {
@@ -278,11 +279,10 @@ export default class Gameboard extends Component {
   placeShip(clickedGridPos) {
     let numID = clickedGridPos;
 
+    ////////////////////////////////////////////////////////////////////
+    // TODO
     // make a check so that ships need to be placed on open grid positions
-    ////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////
+
     // the nextShip is chosen by it's isPlaced boolean
     let nextShip = this.getNextShip(this.state);
     // the value changes but the state is not re-rendered because setState is not used
@@ -374,6 +374,11 @@ export default class Gameboard extends Component {
   }
 
   render() {
+    // if this is the user board, show what ships still need to be placed
+    const { isUserBoard } = this.props;
+    // passed down to ships container
+    const { carrier, cruiser, destroyer, submarine } = this.state;
+    let ships = { carrier, cruiser, destroyer, submarine };
     // the container will contain each GridCell with it's associated props
     let gridCellsContainer = [];
     // I want a grid of 10x10 so this loop pushes GridCells to the container 100 times
@@ -393,6 +398,12 @@ export default class Gameboard extends Component {
     return (
       <>
         <h2>{this.props.who}</h2>
+        {isUserBoard && (
+          <ShipsContainer
+            ships={ships}
+            isFleetPlaced={this.state.placedAllShips}
+          />
+        )}
         <div className="gameboard grid-10x10 center-horizontal">
           {gridCellsContainer}
         </div>

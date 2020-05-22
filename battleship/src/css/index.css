@@ -184,6 +184,18 @@ button {
           justify-content: center;
 }
 
+.flex-even-row {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+}
+
 .grid-10x10 {
   display: -ms-grid;
   display: grid;

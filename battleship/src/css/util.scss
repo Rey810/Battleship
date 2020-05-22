@@ -149,6 +149,12 @@ button {
   justify-content: center;
 }
 
+.flex-even-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
 .grid-10x10 {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
