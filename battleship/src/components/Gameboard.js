@@ -59,9 +59,6 @@ export default class Gameboard extends Component {
   }
 
   componentDidUpdate() {
-    // if (this.props.resetGameStatus !== prevProps.resetGameStatus) {
-    //   console.log("I will run my shat now");
-    // }
     if (this.props.isUserTurn === false && this.props.isUserBoard === true) {
       this.handleAttack(randomNumber());
     }
@@ -238,7 +235,7 @@ export default class Gameboard extends Component {
   handleAttack(attackedPosition, shipStates = this.state) {
     const { changeTurn } = this.props;
     try {
-      // returns out of function if an old grid position is clicked again
+      // returns out of function if a hit grid position is clicked again
       let pos = attackedPosition;
       let hitPositions = [...this.state.hitGridPositions];
       if (hitPositions.some((position) => position === pos)) return;
@@ -275,16 +272,38 @@ export default class Gameboard extends Component {
     }
   }
 
+  isPositionTaken(position, shipToBePlaced, state = this.state) {
+    let clickedPosition = position;
+    let ship = shipToBePlaced;
+    const { carrier, cruiser, destroyer, submarine } = state;
+    // return if the clicked position plus the length of the ship includes any occupied grid positions
+    let occupiedPositions = [
+      ...carrier.gridPosition,
+      ...cruiser.gridPosition,
+      ...destroyer.gridPosition,
+      ...submarine.gridPosition,
+    ];
+
+    // do this for each position the ship will occupy
+    for (let i = 0; i < ship.length; i++) {
+      // if the clicked position plus i is found in the occupied positions, exit the function and return true
+      if (
+        occupiedPositions.some((position) => position === clickedPosition + i)
+      )
+        return true;
+    }
+    // this only returns when the clickedPosition is not found in an occupied position
+    return false;
+  }
+
   // runs when there is a grid click but not all the ships are placed yet
   placeShip(clickedGridPos) {
     let numID = clickedGridPos;
-
-    ////////////////////////////////////////////////////////////////////
-    // TODO
-    // make a check so that ships need to be placed on open grid positions
-
     // the nextShip is chosen by it's isPlaced boolean
     let nextShip = this.getNextShip(this.state);
+
+    // exits function if ship can't be placed at clicked position
+    if (this.isPositionTaken(numID, nextShip)) return;
     // the value changes but the state is not re-rendered because setState is not used
     nextShip.isPlaced = true;
 
@@ -333,9 +352,9 @@ export default class Gameboard extends Component {
   // takes a number id
   // compares id to an array containing all the ships' gridPositions
   // Returns "hasSHip" if the id is found in one of the grid positions
-  hasShip(gridcellID) {
+  hasShip(gridcellID, isUserBoard = this.props.isUserBoard) {
     // if this is the computer board then it can't add a hasShip class as this will give it away to the user so the function should just return
-    if (this.props.isUserBoard === false) {
+    if (isUserBoard === false) {
       return "";
     }
 

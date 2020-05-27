@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import Gameboard from "../../components/Gameboard";
+import shipFactory from "../../factories/shipFactory";
 
 describe("Gameboard component functionality", () => {
   describe("handleClick()", () => {});
@@ -7,7 +8,8 @@ describe("Gameboard component functionality", () => {
   describe("hasShip()", () => {
     it("should return a boolean", () => {
       let gameBoard = new Gameboard();
-      let returnValue = gameBoard.hasShip("P-1");
+      let isUserBoard = true;
+      let returnValue = gameBoard.hasShip("P-1", isUserBoard);
       expect(typeof returnValue === "string").toBe(true);
     });
   });
@@ -76,6 +78,36 @@ describe("Gameboard component functionality", () => {
         ship: null,
         hitGridPos: 25,
       });
+    });
+  });
+
+  describe("isPositionTaken", () => {
+    let state = {
+      carrier: {
+        gridPosition: [1, 2, 3, 4, 5],
+      },
+      cruiser: {
+        gridPosition: [],
+      },
+      destroyer: {
+        gridPosition: [],
+      },
+      submarine: {
+        gridPosition: [],
+      },
+    };
+    it("ship can't be placed on taken slot", () => {
+      let nextShip = shipFactory("destroyer");
+      let gameboard = new Gameboard();
+      let answer = gameboard.isPositionTaken(5, nextShip, state);
+      expect(answer).toBe(true);
+    });
+
+    it("ship can be placed on open slot", () => {
+      let nextShip = shipFactory("destroyer");
+      let gameboard = new Gameboard();
+      let answer = gameboard.isPositionTaken(6, nextShip, state);
+      expect(answer).toBe(false);
     });
   });
 

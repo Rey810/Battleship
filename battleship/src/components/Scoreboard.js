@@ -18,5 +18,5 @@ export default class Scoreboard extends Component {
 Scoreboard.propTypes = {
   userName: PropTypes.string.isRequired,
   userScore: PropTypes.number.isRequired,
-  computerScore: PropTypes.string.isRequired,
+  computerScore: PropTypes.number.isRequired,
 };
