@@ -332,6 +332,9 @@ export default class Gameboard extends Component {
       if (clickedPosition <= 90 && clickedPosition + i > 90) {
         return true;
       }
+      if (clickedPosition <= 100 && clickedPosition + i > 100) {
+        return true;
+      }
     }
     return false;
   }
