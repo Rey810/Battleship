@@ -81,7 +81,7 @@ describe("Gameboard component functionality", () => {
     });
   });
 
-  describe("isPositionTaken", () => {
+  describe("isPositionTaken()", () => {
     let state = {
       carrier: {
         gridPosition: [1, 2, 3, 4, 5],
@@ -108,6 +108,16 @@ describe("Gameboard component functionality", () => {
       let gameboard = new Gameboard();
       let answer = gameboard.isPositionTaken(6, nextShip, state);
       expect(answer).toBe(false);
+    });
+  });
+
+  describe("shipOverlaps()", () => {
+    let gameboard = new Gameboard();
+    let nextShip = shipFactory("cruiser");
+    let clickedPosition = 9;
+    it.only("returns true when a ships placement will overlap to next line", () => {
+      let answer = gameboard.shipOverlaps(clickedPosition, nextShip);
+      expect(answer).toBe(true);
     });
   });
 

@@ -296,6 +296,46 @@ export default class Gameboard extends Component {
     return false;
   }
 
+  // checks if a ship is going to overlap onto next row if placed at 'position'
+  shipOverlaps(position, shipToBePlaced) {
+    let clickedPosition = position;
+    let ship = shipToBePlaced;
+    // check if each possible placement position will overlap
+    // use ship length for this
+    for (let i = 0; i < ship.length; i++) {
+      // check clickedPosition against grid
+      // TODO: refactor!
+      if (clickedPosition <= 10 && clickedPosition + i > 10) {
+        return true;
+      }
+      if (clickedPosition <= 20 && clickedPosition + i > 20) {
+        return true;
+      }
+      if (clickedPosition <= 30 && clickedPosition + i > 30) {
+        return true;
+      }
+      if (clickedPosition <= 40 && clickedPosition + i > 40) {
+        return true;
+      }
+      if (clickedPosition <= 50 && clickedPosition + i > 50) {
+        return true;
+      }
+      if (clickedPosition <= 60 && clickedPosition + i > 60) {
+        return true;
+      }
+      if (clickedPosition <= 70 && clickedPosition + i > 70) {
+        return true;
+      }
+      if (clickedPosition <= 80 && clickedPosition + i > 80) {
+        return true;
+      }
+      if (clickedPosition <= 90 && clickedPosition + i > 90) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   // runs when there is a grid click but not all the ships are placed yet
   placeShip(clickedGridPos) {
     let numID = clickedGridPos;
@@ -304,6 +344,8 @@ export default class Gameboard extends Component {
 
     // exits function if ship can't be placed at clicked position
     if (this.isPositionTaken(numID, nextShip)) return;
+    //add a function that check sif the ships potential position will overlap onto the next grid row
+    if (this.shipOverlaps(numID, nextShip)) return;
     // the value changes but the state is not re-rendered because setState is not used
     nextShip.isPlaced = true;
 
