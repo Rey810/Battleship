@@ -461,7 +461,13 @@ export default class Gameboard extends Component {
 
     return (
       <>
-        <h2>{this.props.who}</h2>
+        <h2
+          className={`name-header margin-top-x4 padding-small ${
+            this.props.who === "A Really Smart AI" ? "bg-red" : "bg-green"
+          }`}
+        >
+          {this.props.who}
+        </h2>
         {isUserBoard && (
           <ShipsContainer
             ships={ships}

@@ -51,33 +51,38 @@ class Game extends Component {
     };
     return (
       <>
-        <Scoreboard
-          userName={this.state.userName}
-          userScore={this.state.user}
-          computerScore={this.state.computer}
-        />
-        <Gameboard
-          key={userKey}
-          who={userName}
-          opponent={computerName}
-          isUserTurn={isUserTurn}
-          isUserBoard={true}
-          changeTurn={this.changeTurn}
-          updateBothFleetsSet={this.updateBothFleetsSet}
-          resetGameAction={this.resetGame}
-          updateScoreAction={this.updateScore}
-        />
-        <Gameboard
-          key={computerKey}
-          who={computerName}
-          opponent={userName}
-          isUserTurn={isUserTurn}
-          isUserBoard={false}
-          changeTurn={this.changeTurn}
-          bothFleetsSet={bothFleetsSet}
-          resetGameAction={this.resetGame}
-          updateScoreAction={this.updateScore}
-        />
+        <div class="center-text">
+          <div className="column header">
+            <h1 className="no-margin-bottom">Battleship</h1>
+            <Scoreboard
+              userName={this.state.userName}
+              userScore={this.state.user}
+              computerScore={this.state.computer}
+            />
+          </div>
+          <Gameboard
+            key={userKey}
+            who={userName}
+            opponent={computerName}
+            isUserTurn={isUserTurn}
+            isUserBoard={true}
+            changeTurn={this.changeTurn}
+            updateBothFleetsSet={this.updateBothFleetsSet}
+            resetGameAction={this.resetGame}
+            updateScoreAction={this.updateScore}
+          />
+          <Gameboard
+            key={computerKey}
+            who={computerName}
+            opponent={userName}
+            isUserTurn={isUserTurn}
+            isUserBoard={false}
+            changeTurn={this.changeTurn}
+            bothFleetsSet={bothFleetsSet}
+            resetGameAction={this.resetGame}
+            updateScoreAction={this.updateScore}
+          />
+        </div>
       </>
     );
   }

@@ -68,6 +68,10 @@ button {
   margin-top: 1.5em;
 }
 
+.margin-top-x4 {
+  margin-top: 2em;
+}
+
 .margin-bottom {
   margin-bottom: 0.5em;
 }
@@ -91,6 +95,10 @@ button {
 
 .margin-left-x2 {
   margin-left: 2em;
+}
+
+.padding-small {
+  padding: 1rem;
 }
 
 .full-width {
@@ -203,12 +211,15 @@ button {
       grid-template-columns: repeat(10, 1fr);
   -ms-grid-rows: (1fr)[10];
       grid-template-rows: repeat(10, 1fr);
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  margin: 0 auto;
 }
 
 .grid-cell {
   height: 2em;
-  width: 100%;
-  min-width: 1.5em;
+  width: 2rem;
 }
 
 .grid-col-2 {
@@ -221,6 +232,22 @@ button {
 .small-img {
   -webkit-transform: scale(0.4);
           transform: scale(0.4);
+}
+
+.bg-gray {
+  background-color: #333;
+}
+
+.bg-green {
+  background-color: #8ae08a;
+}
+
+.bg-red {
+  background-color: #e08a8a;
+}
+
+.white {
+  color: #fff;
 }
 
 .text-small {
@@ -274,6 +301,10 @@ button {
 
 .no-margin-bottom {
   margin-bottom: 0;
+}
+
+.no-margin-top-bottom {
+  margin: 0;
 }
 
 .block {

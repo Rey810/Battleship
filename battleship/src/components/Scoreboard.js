@@ -7,9 +7,9 @@ export default class Scoreboard extends Component {
     const { userName = "User", userScore = 0, computerScore = 0 } = this.props;
     return (
       <section>
-        <h2>
+        <h4 className="no-margin-top-bottom">
           {userName} {userScore} : {computerScore} Computer
-        </h2>
+        </h4>
       </section>
     );
   }

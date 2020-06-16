@@ -66,6 +66,10 @@ button {
   margin-top: 1.5em;
 }
 
+.margin-top-x4 {
+  margin-top: 2em;
+}
+
 .margin-bottom {
   margin-bottom: 0.5em;
 }
@@ -89,6 +93,10 @@ button {
 
 .margin-left-x2 {
   margin-left: 2em;
+}
+
+.padding-small {
+  padding: 1rem;
 }
 
 .full-width {
@@ -159,12 +167,13 @@ button {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
+  width: max-content;
+  margin: 0 auto;
 }
 
 .grid-cell {
   height: 2em;
-  width: 100%;
-  min-width: 1.5em;
+  width: 2rem;
 }
 
 .grid-col-2 {
@@ -207,6 +216,23 @@ button {
 // .cold-color {
 // // background-color: $cold-color;
 // }
+
+// COLOURS
+.bg-gray {
+  background-color: #333;
+}
+
+.bg-green {
+  background-color: hsl(120, 58%, 71%);
+}
+
+.bg-red {
+  background-color: hsl(0, 58%, 71%);
+}
+
+.white {
+  color: #fff;
+}
 
 .text-small {
   font-size: 0.5em;
@@ -259,6 +285,10 @@ button {
 
 .no-margin-bottom {
   margin-bottom: 0;
+}
+
+.no-margin-top-bottom {
+  margin: 0;
 }
 
 .block {
